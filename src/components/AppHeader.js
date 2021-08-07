@@ -20,7 +20,10 @@ import { AppHeaderDropdown } from './header/index'
 const AppHeader = () => {
   const dispatch = useDispatch()
   const sidebarShow = useSelector((state) => state.sidebarShow)
+  const headersTitle = useSelector((state) => state.sidebarToggleReducer)
 
+  console.log(headersTitle)
+  // const []
   return (
     <CHeader position="sticky" className="mb-4">
       <CContainer fluid>
@@ -34,17 +37,21 @@ const AppHeader = () => {
           <CIcon name="logo" height="48" alt="Logo" />
         </CHeaderBrand>
         <CHeaderNav className="d-none d-md-flex me-auto">
-          <CNavItem>
-            <CNavLink to="/dashboard" component={NavLink} activeClassName="active">
-              Dashboard
+          {headersTitle.map((item, key) => (
+            <CNavItem key={key}>
+              <CNavLink to={item.to} component={NavLink} activeClassName="active">
+                {item.title}
+              </CNavLink>
+            </CNavItem>
+          ))}
+          {/* <CNavItem>
+            <CNavLink to="/admin" component={NavLink}>
+              Users
             </CNavLink>
           </CNavItem>
           <CNavItem>
-            <CNavLink href="#">Users</CNavLink>
-          </CNavItem>
-          <CNavItem>
             <CNavLink href="#">Settings</CNavLink>
-          </CNavItem>
+          </CNavItem> */}
         </CHeaderNav>
         <CHeaderNav>
           <CNavItem>

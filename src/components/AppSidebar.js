@@ -1,6 +1,6 @@
 import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-
+import { ADMIN_SELECTED, DASHBOARD_SELECTED, REPORTS_SELECTED } from '../assets/constants'
 import {
   CSidebar,
   CSidebarBrand,
@@ -21,7 +21,7 @@ const AppSidebar = () => {
   const dispatch = useDispatch()
   const unfoldable = useSelector((state) => state.sidebarUnfoldable)
   const sidebarShow = useSelector((state) => state.sidebarShow)
-
+  const sidebarToggleReducer = useSelector((state) => state.sidebarToggleReducer)
   return (
     <CSidebar
       position="fixed"
@@ -37,7 +37,24 @@ const AppSidebar = () => {
         <CIcon className="sidebar-brand-full" name="logo-negative" height={35} />
         <CIcon className="sidebar-brand-narrow" name="sygnet" height={35} />
       </CSidebarBrand>
-      <CSidebarNav>
+      <CSidebarNav
+        onClick={(event) => {
+          if (event.target.childNodes[1])
+            switch (event.target.childNodes[1].data) {
+              case 'Dashboard':
+                dispatch({ type: DASHBOARD_SELECTED })
+                break
+              case 'Admin':
+                dispatch({ type: ADMIN_SELECTED })
+                break
+              case REPORTS_SELECTED:
+                dispatch({ type: REPORTS_SELECTED })
+                break
+              default:
+                dispatch({ type: DASHBOARD_SELECTED })
+            }
+        }}
+      >
         <SimpleBar>
           <CCreateNavItem items={navigation} />
         </SimpleBar>

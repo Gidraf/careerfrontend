@@ -54,10 +54,23 @@ const Widgets = React.lazy(() => import('./views/components/widgets/Widgets'))
 
 const Charts = React.lazy(() => import('./views/components/charts/Charts'))
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
+const Admin = React.lazy(() => import('./views/admin/Admin'))
+const Workgroups = React.lazy(() => import('./views/admin/Workgroups'))
+const Roles = React.lazy(() => import('./views/admin/Roles'))
+const UserForm = React.lazy(() => import('./views/forms/UserForm'))
+const WorkgroupForm = React.lazy(() => import('./views/forms/WorkgroupForm'))
+const RoleForm = React.lazy(() => import('./views/forms/RoleForm'))
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
   { path: '/dashboard', name: 'Dashboard', component: Dashboard },
+  { path: '/admin', canShow: true, name: 'Users', component: Admin },
+  { path: '/workgroups', canShow: true, name: 'Workgroups', component: Workgroups },
+  { path: '/roles', canShow: true, name: 'Roles', component: Roles },
+  { path: '/users', canShow: true, name: 'Users', component: Admin },
+  { path: '/add_users', name: 'Add Users', component: UserForm },
+  { path: '/add_workgroups', name: 'Add Workgroups', component: WorkgroupForm },
+  { path: '/add_roles', name: 'Add Roles', component: RoleForm },
   { path: '/theme', name: 'Theme', component: Colors, exact: true },
   { path: '/theme/colors', name: 'Colors', component: Colors },
   { path: '/theme/typography', name: 'Typography', component: Typography },

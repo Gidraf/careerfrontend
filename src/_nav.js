@@ -15,6 +15,28 @@ const _nav = [
     },
   },
   {
+    _component: 'CNavItem',
+    as: NavLink,
+    anchor: 'Admin',
+    to: '/admin',
+    icon: <CIcon name="cil-settings" customClassName="nav-icon" />,
+    badge: {
+      color: 'info',
+      text: 'NEW',
+    },
+  },
+  {
+    _component: 'CNavItem',
+    as: NavLink,
+    anchor: 'Reports',
+    to: '/reports',
+    icon: <CIcon name="cil-file" customClassName="nav-icon" />,
+    badge: {
+      color: 'info',
+      text: 'NEW',
+    },
+  },
+  {
     _component: 'CNavTitle',
     anchor: 'Theme',
   },
