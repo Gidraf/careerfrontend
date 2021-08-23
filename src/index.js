@@ -9,6 +9,10 @@ import { icons } from './assets/icons'
 
 import { Provider } from 'react-redux'
 import store from './store'
+import { CookiesProvider } from 'react-cookie'
+import { provideToken } from './assets/constants'
+
+provideToken()
 
 React.icons = icons
 

@@ -1,5 +1,10 @@
 import axios from 'axios'
-import { BASE_URL, FETCH_ALL_USERS } from '../../assets/constants'
+import {
+  BASE_URL,
+  FETCH_ALL_USERS,
+  FETCH_USER_ROLES,
+  FETCH_USER_WORKGROUPS,
+} from '../../assets/constants'
 
 export const fetchAllUsers = () => (dispatch) => {
   axios
@@ -64,3 +69,95 @@ export const deleteUser = (id, handleErrors, handleSuccess, setIsLoading) => (di
       }
     })
 }
+
+export const enableDisableUser =
+  (id, action, handleErrors, handleSuccess, setIsLoading) => (dispatch) => {
+    setIsLoading(true)
+    axios
+      .patch(`${BASE_URL}api/v1/user/${id}/${action}`)
+      .then((response) => {
+        setIsLoading(false)
+        handleSuccess(response.data)
+      })
+      .catch((error) => {
+        setIsLoading(false)
+        if (error.response !== undefined) {
+          handleErrors(error.response.data)
+        }
+      })
+  }
+
+export const viewUserRoles = (id, handleErrors, handleSuccess, setIsRoleLoading) => (dispatch) => {
+  setIsRoleLoading(true)
+  axios
+    .get(`${BASE_URL}api/v1/user/${id}/role`)
+    .then((response) => {
+      setIsRoleLoading(false)
+      dispatch({
+        type: FETCH_USER_ROLES,
+        payload: response.data,
+      })
+      handleSuccess(response.data)
+    })
+    .catch((error) => {
+      setIsRoleLoading(false)
+      if (error.response !== undefined) {
+        handleErrors(error.response.data)
+      }
+    })
+}
+
+export const addUserRoles =
+  (id, data, handleErrors, handleUserROleAddedSuccess, setIsAddingRoleLoading) => (dispatch) => {
+    setIsAddingRoleLoading(true)
+    axios
+      .post(`${BASE_URL}api/v1/user/${id}/role`, data)
+      .then((response) => {
+        setIsAddingRoleLoading(false)
+        handleUserROleAddedSuccess(response.data)
+      })
+      .catch((error) => {
+        setIsAddingRoleLoading(false)
+        if (error.response !== undefined) {
+          handleErrors(error.response.data)
+        }
+      })
+  }
+
+export const viewUserWorkGroups =
+  (id, handleErrors, handleSuccess, setIsWorkgroupLoading) => (dispatch) => {
+    setIsWorkgroupLoading(true)
+    axios
+      .get(`${BASE_URL}api/v1/user/${id}/workgroup`)
+      .then((response) => {
+        setIsWorkgroupLoading(false)
+        dispatch({
+          type: FETCH_USER_WORKGROUPS,
+          payload: response.data,
+        })
+        handleSuccess(response.data)
+      })
+      .catch((error) => {
+        setIsWorkgroupLoading(false)
+        if (error.response !== undefined) {
+          handleErrors(error.response.data)
+        }
+      })
+  }
+
+export const addUserGroups =
+  (id, data, handleErrors, handleUserGroupAddedSuccess, setIsAddingGroupLoading) => (dispatch) => {
+    setIsAddingGroupLoading(true)
+    axios
+      .post(`${BASE_URL}api/v1/user/${id}/workgroup`, data)
+      .then((response) => {
+        setIsAddingGroupLoading(false)
+        handleUserGroupAddedSuccess(response.data)
+      })
+      .catch((error) => {
+        setIsAddingGroupLoading(false)
+        if (error.response !== undefined) {
+          handleErrors(error.response.data)
+        }
+      })
+  }

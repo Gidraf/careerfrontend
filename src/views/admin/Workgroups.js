@@ -9,6 +9,9 @@ import {
   CCardBody,
   CCardFooter,
   CCardHeader,
+  CCardTitle,
+  CCollapse,
+  CCallout,
   CCol,
   CProgress,
   CRow,
@@ -38,7 +41,12 @@ import { CChartLine } from '@coreui/react-chartjs'
 import { getStyle, hexToRgba } from '@coreui/utils'
 import CIcon from '@coreui/icons-react'
 import { CContainer, CSpinner } from '@coreui/react'
-import { fetchAllgroups, editWorkgroup, deleteWorkgroup } from '../../actions/admin/group.action'
+import {
+  fetchAllgroups,
+  editWorkgroup,
+  deleteWorkgroup,
+  viewWorkgroupUsers,
+} from '../../actions/admin/group.action'
 
 const Workgroups = () => {
   const dispatch = useDispatch()
@@ -52,6 +60,9 @@ const Workgroups = () => {
   const [id, setId] = useState(null)
   const [isSuccess, setisSucess] = useState(false)
   const [actionState, setActionState] = useState(null)
+  const [collapsibleVisible, setCollapsible] = useState(false)
+  const [groupUsers, setWorkgroupUsers] = useState({})
+  const [isUsersLoading, setIsUsersLoading] = useState(false)
 
   const groups = useSelector((state) => state.groupReducer)
   useEffect(() => dispatch(fetchAllgroups()), []) // eslint-disable-line react-hooks/exhaustive-deps
@@ -62,7 +73,27 @@ const Workgroups = () => {
 
   const handleSuccess = (data) => {
     setisSucess(true)
+    if (actionState === `delete`) {
+      setVisible(false)
+    }
     dispatch(fetchAllgroups())
+  }
+
+  const handleUserSuccess = (data) => {
+    setWorkgroupUsers(data)
+  }
+
+  const setCollapsibleVisible = (item) => {
+    if (collapsibleVisible) {
+      setCollapsible(false)
+      setId(null)
+      setWorkgroupUsers({})
+      return
+    }
+    setId(item.id)
+    setCollapsible(true)
+
+    dispatch(viewWorkgroupUsers(item.id, handleErrors, handleUserSuccess, setIsUsersLoading))
   }
 
   const selectWorkgroup = (item, actionState) => {
@@ -219,24 +250,97 @@ const Workgroups = () => {
             <CTableHeaderCell>Actions</CTableHeaderCell>
           </CTableRow>
         </CTableHead>
-        <CTableBody>{groups.result && renderGroups(groups.result, selectWorkgroup)}</CTableBody>
+        <CTableBody>
+          {groups.result &&
+            renderGroups(
+              groups.result,
+              selectWorkgroup,
+              setCollapsibleVisible,
+              id,
+              collapsibleVisible,
+              isUsersLoading,
+            )}
+        </CTableBody>
       </CTable>
+      <CCollapse visible={collapsibleVisible}>
+        <CContainer className="overflow-auto">
+          <CRow xs={{ gutterX: 0.5 }}>
+            <CCol>
+              <CCallout color="primary" style={{ padding: 0 }}>
+                <CCard className="mt-1">
+                  <CCardHeader>
+                    <CCardTitle>Users</CCardTitle>
+                  </CCardHeader>
+                  <CCardBody>
+                    <CListGroup>
+                      {isUsersLoading && <CSpinner component="span" aria-hidden="true" />}
+                      {groupUsers.result &&
+                        groupUsers.result.map((item, i) => (
+                          <CListGroupItem key={i}>
+                            <strong>{`${item.sir_name} ${item.last_name}`}</strong>
+                            <br />
+                            <small className="small text-medium-emphasis">{item.email}</small>
+                          </CListGroupItem>
+                        ))}
+                    </CListGroup>
+                  </CCardBody>
+                </CCard>
+              </CCallout>
+            </CCol>
+            <CCol>
+              <CCallout color="primary" style={{ padding: 0 }}>
+                <CCard className="mt-1" style={{ marginTop: 0 }}>
+                  <CCardHeader>
+                    <CCardTitle>Tasks</CCardTitle>
+                  </CCardHeader>
+                  <CCardBody>
+                    {/* <CListGroup>
+                      {isUsersLoading && <CSpinner component="span" aria-hidden="true" />}
+                      {rolesusers.result &&
+                        rolesusers.result.map((item, i) => (
+                          <CListGroupItem key={i}>
+                            <strong>{`${item.sir_name} ${item.last_name}`}</strong>
+                            <br />
+                            <small className="small text-medium-emphasis">{item.email}</small>
+                          </CListGroupItem>
+                        ))}
+                    </CListGroup> */}
+                  </CCardBody>
+                </CCard>
+              </CCallout>
+            </CCol>
+          </CRow>
+        </CContainer>
+      </CCollapse>
     </>
   )
 }
 
-const renderGroups = (groups, selectWorkgroup) => {
+const renderGroups = (
+  groups,
+  selectWorkgroup,
+  setCollapsibleVisible,
+  id,
+  collapsibleVisible,
+  isUsersLoading,
+) => {
   const allGroups = groups.map((item, i) => (
-    <CTableRow key={i}>
-      <CTableDataCell>
+    <CTableRow key={i} style={{ cursor: 'pointer' }}>
+      <CTableDataCell onClick={() => !isUsersLoading && setCollapsibleVisible(item)}>
         <div>{item.name}</div>
         <div className="small text-medium-emphasis">{item.created_at}</div>
       </CTableDataCell>
-      <CTableDataCell className="text-center">
+      <CTableDataCell
+        className="text-center"
+        onClick={() => !isUsersLoading && setCollapsibleVisible(item)}
+      >
         {/* <CIcon size="xl" name="cif-us" title="us" id="us" /> */}
         <div>{item.email}</div>
       </CTableDataCell>
-      <CTableDataCell className="text-center">
+      <CTableDataCell
+        className="text-center"
+        onClick={() => !isUsersLoading && setCollapsibleVisible(item)}
+      >
         {/* <CIcon size="xl" name="cif-us" title="us" id="us" /> */}
         <div>{item.description}</div>
       </CTableDataCell>

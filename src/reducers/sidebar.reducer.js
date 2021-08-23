@@ -6,7 +6,7 @@ import {
 } from '../assets/constants'
 
 let initialState = [
-  { title: 'Dashboard', to: '/dashboard' },
+  { title: 'Analytics', to: '/analytics' },
   { title: 'Requests', to: '/requests' },
   { title: 'Customers', to: '/customers' },
 ]
@@ -38,7 +38,7 @@ export const sidebarToggleReducer = (state = initialState, action) => {
   switch (action.type) {
     case DASHBOARD_SELECTED:
       return [
-        { title: 'Dashboard', to: '/dashboard' },
+        { title: 'Analytics', to: '/analytics' },
         { title: 'Requests', to: '/requests' },
         { title: 'Customers', to: '/customers' },
       ]

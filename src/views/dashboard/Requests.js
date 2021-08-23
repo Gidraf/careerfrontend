@@ -45,28 +45,19 @@ import { CChartLine } from '@coreui/react-chartjs'
 import { getStyle, hexToRgba } from '@coreui/utils'
 import CIcon from '@coreui/icons-react'
 import { CContainer, CSpinner } from '@coreui/react'
-import {
-  fetchAllUsers,
-  editUser,
-  deleteUser,
-  enableDisableUser,
-  viewUserRoles,
-  viewUserWorkGroups,
-  addUserRoles,
-  addUserGroups,
-} from '../../actions/admin/user.action'
-import { fetchAllRoles } from '../../actions/admin/role.action'
+import { fetchAllRequests } from '../../actions/dashboard/requests.action'
+// import { fetchAllRoles } from '../../actions/admin/role.action'
 
-import { fetchAllgroups } from '../../actions/admin/group.action'
+// import { fetchAllgroups } from '../../actions/admin/group.action'
 
-const Users = () => {
+const Requests = () => {
   const dispatch = useDispatch()
-  const [sirName, setSirName] = useState('')
-  const [otherName, setOtherName] = useState('')
-  const [lastName, setLastName] = useState('')
-  const [email, setEmail] = useState('')
-  const [username, setuserName] = useState('')
-  const [phonenumber, setPhonenumber] = useState('')
+  //   const [sirName, setSirName] = useState('')
+  //   const [otherName, setOtherName] = useState('')
+  //   const [lastName, setLastName] = useState('')
+  //   const [email, setEmail] = useState('')
+  //   const [username, setuserName] = useState('')
+  //   const [phonenumber, setPhonenumber] = useState('')
   const [errors, setErrors] = useState({})
   const [isLoading, setIsLoading] = useState(false)
   const [visible, setVisible] = useState(false)
@@ -75,7 +66,7 @@ const Users = () => {
   const [actionState, setAction] = useState(null)
   const [activateMessage, setMessage] = useState('')
   const [collapsibleVisible, setCollapsible] = useState(false)
-  const users = useSelector((state) => state.userReducer)
+  const requests = useSelector((state) => state.requestReducer)
   const roles = useSelector((state) => state.roleReducer)
   const workgroups = useSelector((state) => state.groupReducer)
   const reduceRoles = useSelector((state) => state.userRole)
@@ -95,9 +86,9 @@ const Users = () => {
   const [isAddingGroupLoading, setIsAddingGroupLoading] = useState(false)
 
   useEffect(() => {
-    dispatch(fetchAllUsers())
-    dispatch(fetchAllRoles())
-    dispatch(fetchAllgroups())
+    dispatch(fetchAllRequests())
+    // dispatch(fetchAllRoles())
+    // dispatch(fetchAllgroups())
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleErrors = (errors) => {
@@ -111,80 +102,22 @@ const Users = () => {
     if (actionState !== `edit`) {
       setVisible(false)
     }
-    dispatch(fetchAllUsers())
-  }
-
-  const handleUserROleAddedSuccess = (data) => {
-    dispatch(viewUserRoles(id, handleErrors, handleRolesSuccess, setIsRoleLoading))
-    setisEditRole(false)
-  }
-
-  const handleUserGroupAddedSuccess = (data) => {
-    dispatch(viewUserWorkGroups(id, handleErrors, handleWorkgroupSuccess, setIsWorkgroupLoading))
-    setIsEditGroup(false)
-  }
-
-  const saveUserRoles = () => {
-    const data = []
-    if (isEditRole) {
-      for (let i = 0; i < userRoles.length; i++) {
-        data.push(userRoles[i].id)
-      }
-    }
-    dispatch(
-      addUserRoles(
-        id,
-        { roles: data },
-        handleErrors,
-        handleUserROleAddedSuccess,
-        setIsAddingRoleLoading,
-      ),
-    )
-  }
-
-  const saveUserGroups = () => {
-    const data = []
-    if (isEditGroup) {
-      for (let i = 0; i < userWorkgroupps.length; i++) {
-        data.push(userWorkgroupps[i].id)
-      }
-    }
-    dispatch(
-      addUserGroups(
-        id,
-        { groups: data },
-        handleErrors,
-        handleUserGroupAddedSuccess,
-        setIsAddingGroupLoading,
-      ),
-    )
-  }
-
-  const handleRolesSuccess = (data) => {
-    setUserRoles(data.result)
-  }
-
-  const handleWorkgroupSuccess = (data) => {
-    setUserWorkgroups(data.result)
+    dispatch(fetchAllRequests())
   }
 
   const setCollapsibleVisible = (item) => {
     if (collapsibleVisible) {
       setCollapsible(false)
       setId(null)
-      setUserRoles([])
-      setUserWorkgroups([])
+      //   setUserRoles([])
+      //   setUserWorkgroups([])
       return
     }
     setId(item.id)
     setCollapsible(true)
-    dispatch(viewUserRoles(item.id, handleErrors, handleRolesSuccess, setIsRoleLoading))
-    dispatch(
-      viewUserWorkGroups(item.id, handleErrors, handleWorkgroupSuccess, setIsWorkgroupLoading),
-    )
   }
 
-  const selectUser = (item, actionState) => {
+  const selectRequest = (item, actionState) => {
     if (item.status) {
       setMessage(`Are Sure you want to Deactivate ${item.sir_name}`)
     }
@@ -193,36 +126,10 @@ const Users = () => {
     }
     setAction(actionState)
     setId(item.id)
-    setSirName(item.sir_name)
-    setOtherName(item.other_name)
-    setLastName(item.last_name)
-    setEmail(item.email)
-    setuserName(item.username)
-    setPhonenumber(item.phonenumber)
+
     setVisible(true)
     setisSucess(false)
     setCollapsible(false)
-  }
-
-  const SubmitUser = () => {
-    if (id !== null) {
-      dispatch(
-        editUser(
-          id,
-          {
-            sir_name: sirName,
-            phonenumber: phonenumber,
-            email: email,
-            username: username,
-            last_name: lastName,
-            other_name: otherName,
-          },
-          handleErrors,
-          handleSuccess,
-          setIsLoading,
-        ),
-      )
-    }
   }
 
   const discardRolesChanges = () => {
@@ -234,17 +141,6 @@ const Users = () => {
   const discardGroupssChanges = () => {
     setUserWorkgroups(reduceGroups)
     setIsEditGroup(false)
-  }
-
-  const resetModal = () => {
-    setId(null)
-    setVisible(false)
-    setSirName('')
-    setOtherName('')
-    setLastName('')
-    setEmail('')
-    setuserName('')
-    setPhonenumber('')
   }
 
   const roleErrorToast = (
@@ -267,206 +163,35 @@ const Users = () => {
 
   return (
     <>
-      <CToaster ref={toaster} push={toast} placement="top-end" />
-      <CToaster ref={wToaster} push={wtoast} placement="top-end" />
-      <CModal visible={visible} onDismiss={() => resetModal}>
-        <CModalHeader onDismiss={() => setVisible(false)}>
-          <CModalTitle>
-            {isSuccess && <CAlert color="success">User Successfully Edited!</CAlert>}
-          </CModalTitle>
-        </CModalHeader>
-        <CModalBody>
-          {actionState === 'edit' && (
-            <CForm className="row g-3">
-              <h3>Edit User</h3>
-              <p className="text-medium-emphasis">Edit {sirName}</p>
-              <CInputGroup className="mb-3">
-                <CInputGroupText>
-                  <CIcon name="cil-user" />
-                </CInputGroupText>
-                <CFormControl
-                  value={sirName}
-                  className={errors.sir_name && 'is-invalid'}
-                  onChange={(e) => {
-                    setErrors({})
-                    setSirName(e.target.value)
-                  }}
-                  size="lg"
-                  placeholder={!errors.sir_name ? 'Sir Name' : errors.sir_name[0]}
-                  autoComplete="Sir Name"
-                />
-              </CInputGroup>
-              <CInputGroup className="mb-3">
-                <CInputGroupText>
-                  <CIcon name="cil-user" />
-                </CInputGroupText>
-                <CFormControl
-                  value={lastName}
-                  className={errors.last_name && 'is-invalid'}
-                  onChange={(e) => {
-                    setErrors({})
-                    setLastName(e.target.value)
-                  }}
-                  size="lg"
-                  placeholder={!errors.last_name ? 'Last Name' : errors.last_name[0]}
-                  autoComplete="Last Name"
-                />
-              </CInputGroup>
-              <CInputGroup className="mb-3">
-                <CInputGroupText>
-                  <CIcon name="cil-user" />
-                </CInputGroupText>
-                <CFormControl
-                  value={otherName}
-                  className={errors.other_name && 'is-invalid'}
-                  onChange={(e) => {
-                    setErrors({})
-                    setOtherName(e.target.value)
-                  }}
-                  size="lg"
-                  placeholder={!errors.other_name ? 'Other Name' : errors.other_name[0]}
-                  autoComplete="Other Name"
-                />
-              </CInputGroup>
-              <CInputGroup className="mb-3">
-                <CInputGroupText>
-                  <CIcon name="cil-user" />
-                </CInputGroupText>
-                <CFormControl
-                  value={username}
-                  className={errors.username && 'is-invalid'}
-                  onChange={(e) => {
-                    setErrors({})
-                    setuserName(e.target.value)
-                  }}
-                  size="lg"
-                  placeholder={!errors.username ? 'Username' : errors.username[0]}
-                  autoComplete="Username"
-                />
-              </CInputGroup>
-              <CInputGroup className="mb-3">
-                <CInputGroupText>@</CInputGroupText>
-                <CFormControl
-                  value={email}
-                  className={errors.email && 'is-invalid'}
-                  onChange={(e) => {
-                    setErrors({})
-                    setEmail(e.target.value)
-                  }}
-                  size="lg"
-                  placeholder={!errors.email ? 'Email' : errors.email[0]}
-                  autoComplete="email"
-                />
-              </CInputGroup>
-              <CInputGroup className="mb-3">
-                <CInputGroupText>
-                  <CIcon name="cil-phone" />
-                </CInputGroupText>
-                <CFormControl
-                  value={phonenumber}
-                  className={errors.phonenumber && 'is-invalid'}
-                  onChange={(e) => {
-                    setErrors({})
-                    setPhonenumber(e.target.value)
-                  }}
-                  size="lg"
-                  type="tel"
-                  placeholder={!errors.phonenumber ? 'Phonenumber' : errors.phonenumber[0]}
-                />
-              </CInputGroup>
-
-              <CCol xs="6">
-                <CFormControl
-                  onClick={resetModal}
-                  className="btn btn-primary"
-                  type="button"
-                  size="lg"
-                  value="Close"
-                />
-              </CCol>
-              <CCol xs="6">
-                {isLoading ? (
-                  <CSpinner component="span" size="lg" aria-hidden="true" />
-                ) : (
-                  <CFormControl
-                    onClick={SubmitUser}
-                    className="btn btn-success"
-                    type="button"
-                    size="lg"
-                    value="Edit User"
-                  />
-                )}
-              </CCol>
-            </CForm>
-          )}
-          {actionState === 'delete' && <span>Are you sure you want to delete {sirName}</span>}
-          {(actionState === 'activate' || actionState === 'deactivate') && (
-            <span>{activateMessage}</span>
-          )}
-        </CModalBody>
-        {actionState !== 'edit' && (
-          <CModalFooter>
-            <CButton
-              color="secondary"
-              onClick={() => {
-                resetModal()
-              }}
-            >
-              No
-            </CButton>
-            <CButton
-              onClick={() => {
-                if (id !== null && actionState === 'delete') {
-                  dispatch(deleteUser(id, handleErrors, handleSuccess, setIsLoading))
-                }
-                if (id !== null && (actionState === 'activate' || actionState === 'deactivate')) {
-                  dispatch(
-                    enableDisableUser(
-                      id,
-                      actionState === 'activate' ? 'enable' : 'disable',
-                      handleErrors,
-                      handleSuccess,
-                      setIsLoading,
-                    ),
-                  )
-                }
-              }}
-              color="primary"
-            >
-              Yes
-            </CButton>
-          </CModalFooter>
-        )}
-      </CModal>
       <CTable striped hover responsive align="middle" className="mb-0 border">
         <CTableHead color="light">
           <CTableRow>
-            <CTableHeaderCell>Sir Name</CTableHeaderCell>
-            <CTableHeaderCell className="text-center">Last Name</CTableHeaderCell>
-            <CTableHeaderCell>Other Name</CTableHeaderCell>
-            <CTableHeaderCell className="text-center">Username</CTableHeaderCell>
-            <CTableHeaderCell className="text-center">Email</CTableHeaderCell>
-            <CTableHeaderCell className="text-center">Phonenumber</CTableHeaderCell>
-            <CTableHeaderCell>Status</CTableHeaderCell>
+            <CTableHeaderCell>Client Name</CTableHeaderCell>
+            <CTableHeaderCell className="text-center">Client Email</CTableHeaderCell>
+            <CTableHeaderCell>Email Subject</CTableHeaderCell>
+            <CTableHeaderCell className="text-center">Group Assigned</CTableHeaderCell>
+            <CTableHeaderCell className="text-center">Status</CTableHeaderCell>
+            {/* <CTableHeaderCell className="text-center">Request Type</CTableHeaderCell> */}
+            <CTableHeaderCell>Progress Status</CTableHeaderCell>
             <CTableHeaderCell>Actions</CTableHeaderCell>
           </CTableRow>
         </CTableHead>
         <CTableBody>
-          {users.result &&
-            renderUsers(
-              users.result,
-              selectUser,
+          {requests.result &&
+            renderequests(
+              requests.result,
+              selectRequest,
               setCollapsibleVisible,
               id,
               collapsibleVisible,
-              isRoleLoading,
-              isWorkgroupLoading,
-              isEditRole,
-              addToast,
-              roleErrorToast,
-              isEditGroup,
-              addWToast,
-              GroupErrorToast,
+              //   isRoleLoading,
+              //   isWorkgroupLoading,
+              //   isEditRole,
+              //   addToast,
+              //   roleErrorToast,
+              //   isEditGroup,
+              //   addWToast,
+              //   GroupErrorToast,
             )}
         </CTableBody>
       </CTable>
@@ -479,10 +204,10 @@ const Users = () => {
                   <CCardHeader>
                     <CRow>
                       <CCol className="col-9">
-                        <CCardTitle>Roles</CCardTitle>
+                        <CCardTitle>Mail Thread</CCardTitle>
                       </CCol>
                       <CCol className="col-3">
-                        <CPopover
+                        {/* <CPopover
                           title="Assign Roles"
                           trigger="click"
                           content={renderRoles(
@@ -499,12 +224,12 @@ const Users = () => {
                           placement="bottom"
                         >
                           <CButton size="sm">Add ➕</CButton>
-                        </CPopover>
+                        </CPopover> */}
                       </CCol>
                     </CRow>
                   </CCardHeader>
                   <CCardBody>
-                    <CListGroup>
+                    {/* <CListGroup>
                       {isRoleLoading && <CSpinner component="span" aria-hidden="true" />}
                       {userRoles.map((item, i) => (
                         <CListGroupItem key={i}>
@@ -513,7 +238,7 @@ const Users = () => {
                           <small className="small text-medium-emphasis">{item.description}</small>
                         </CListGroupItem>
                       ))}
-                    </CListGroup>
+                    </CListGroup> */}
                   </CCardBody>
                 </CCard>
               </CCallout>
@@ -524,10 +249,10 @@ const Users = () => {
                   <CCardHeader>
                     <CRow>
                       <CCol className="col-9">
-                        <CCardTitle>Workgroups</CCardTitle>
+                        <CCardTitle>Services Requested</CCardTitle>
                       </CCol>
                       <CCol className="col-3">
-                        <CPopover
+                        {/* <CPopover
                           title="Assign Roles"
                           trigger="click"
                           content={renderGroups(
@@ -544,12 +269,12 @@ const Users = () => {
                           placement="bottom"
                         >
                           <CButton size="sm">Add ➕</CButton>
-                        </CPopover>
+                        </CPopover> */}
                       </CCol>
                     </CRow>
                   </CCardHeader>
                   <CCardBody>
-                    <CListGroup>
+                    {/* <CListGroup>
                       {isWorkgroupLoading && <CSpinner component="span" aria-hidden="true" />}
                       {userWorkgroupps &&
                         userWorkgroupps.map((item, i) => (
@@ -559,7 +284,7 @@ const Users = () => {
                             <small className="small text-medium-emphasis">{item.description}</small>
                           </CListGroupItem>
                         ))}
-                    </CListGroup>
+                    </CListGroup> */}
                   </CCardBody>
                 </CCard>
               </CCallout>
@@ -568,7 +293,7 @@ const Users = () => {
               <CCallout color="primary" style={{ padding: 0 }}>
                 <CCard className="mt-1" style={{ marginTop: 0 }}>
                   <CCardHeader>
-                    <CCardTitle>Tasks </CCardTitle>
+                    <CCardTitle>Activities</CCardTitle>
                   </CCardHeader>
                   <CCardBody></CCardBody>
                 </CCard>
@@ -581,163 +306,150 @@ const Users = () => {
   )
 }
 
-const renderUsers = (
-  users,
-  selectUser,
-  setCollapsibleVisible,
-  id,
-  collapsibleVisible,
-  isRoleLoading,
-  isWorkgroupLoading,
-  isEditRole,
-  addToast,
-  roleErrorToast,
-  isEditGroup,
-  addWToast,
-  GroupErrorToast,
-) => {
-  const currentUser = users.filter((user) => user.id === id)
-  let filteredUsers = users
-  if (currentUser.length > 0 && collapsibleVisible) {
-    filteredUsers = currentUser
+const renderequests = (requests, selectRequest, setCollapsibleVisible, id, collapsibleVisible) => {
+  const currentRequest = requests.filter((user) => user.id === id)
+  let filteredRequest = requests
+  if (currentRequest.length > 0 && collapsibleVisible) {
+    filteredRequest = currentRequest
   }
-  const allUsers = filteredUsers.map((item, i) => (
+  const allRequest = filteredRequest.map((item, i) => (
     <CTableRow key={i} style={{ cursor: 'pointer' }}>
       <CTableDataCell
         onClick={() => {
-          if (!isRoleLoading && !isWorkgroupLoading)
-            if (isEditRole) {
-              addToast(roleErrorToast)
-              return
-            }
-          if (isEditGroup) {
-            addWToast(GroupErrorToast)
-            return
-          }
+          //   if (!isRoleLoading && !isWorkgroupLoading)
+          //     if (isEditRole) {
+          //       addToast(roleErrorToast)
+          //       return
+          //     }
+          //   if (isEditGroup) {
+          //     addWToast(GroupErrorToast)
+          //     return
+          //   }
           setCollapsibleVisible(item)
         }}
       >
-        <strong>{item.sir_name}</strong>
+        <strong>{item.customer_name}</strong>
         {/* <small className="small text-medium-emphasis">{item.created_at}</small> */}
       </CTableDataCell>
       <CTableDataCell
         className="text-center"
         onClick={() => {
-          if (!isRoleLoading && !isWorkgroupLoading)
-            if (isEditRole) {
-              addToast(roleErrorToast)
+          //   if (!isRoleLoading && !isWorkgroupLoading)
+          //     if (isEditRole) {
+          //       addToast(roleErrorToast)
 
-              return
-            }
-          if (isEditGroup) {
-            addWToast(GroupErrorToast)
-            return
-          }
+          //       return
+          //     }
+          //   if (isEditGroup) {
+          //     addWToast(GroupErrorToast)
+          //     return
+          //   }
           setCollapsibleVisible(item)
         }}
       >
         {/* <CIcon size="xl" name="cif-us" title="us" id="us" /> */}
-        <strong>{item.last_name}</strong>
+        <strong>{item.client_email}</strong>
       </CTableDataCell>
       <CTableDataCell
         onClick={() => {
-          if (!isRoleLoading && !isWorkgroupLoading)
-            if (isEditRole) {
-              addToast(roleErrorToast)
+          //   if (!isRoleLoading && !isWorkgroupLoading)
+          //     if (isEditRole) {
+          //       addToast(roleErrorToast)
 
-              return
-            }
-          if (isEditGroup) {
-            addWToast(GroupErrorToast)
-            return
-          }
+          //       return
+          //     }
+          //   if (isEditGroup) {
+          //     addWToast(GroupErrorToast)
+          //     return
+          //   }
           setCollapsibleVisible(item)
         }}
       >
-        <strong>{item.other_name}</strong>
+        <strong>{item.email_subject}</strong>
         {/* <div className="small text-medium-emphasis">{item.customer_ordered.registered_on}</div> */}
       </CTableDataCell>
       <CTableDataCell
         className="text-center"
         onClick={() => {
-          if (!isRoleLoading && !isWorkgroupLoading)
-            if (isEditRole) {
-              addToast(roleErrorToast)
+          // if (!isRoleLoading && !isWorkgroupLoading)
+          //     if (isEditRole) {
+          //       addToast(roleErrorToast)
 
-              return
-            }
-          if (isEditGroup) {
-            addWToast(GroupErrorToast)
-            return
-          }
+          //       return
+          //     }
+          //   if (isEditGroup) {
+          //     addWToast(GroupErrorToast)
+          //     return
+          //   }
           setCollapsibleVisible(item)
         }}
       >
-        <strong>{item.username}</strong>
+        <strong>{item.group ? item.group.name : 'Not Yet'}</strong>
       </CTableDataCell>
       <CTableDataCell
         className="text-center"
         onClick={() => {
-          if (!isRoleLoading && !isWorkgroupLoading)
-            if (isEditRole) {
-              addToast(roleErrorToast)
+          //   if (!isRoleLoading && !isWorkgroupLoading)
+          //     if (isEditRole) {
+          //       addToast(roleErrorToast)
 
-              return
-            }
-          if (isEditGroup) {
-            addWToast(GroupErrorToast)
-            return
-          }
+          //       return
+          //     }
+          //   if (isEditGroup) {
+          //     addWToast(GroupErrorToast)
+          //     return
+          //   }
           setCollapsibleVisible(item)
         }}
       >
-        <div>{item.email}</div>
+        <div>{item.status}</div>
       </CTableDataCell>
-      <CTableDataCell
+      {/* <CTableDataCell
         className="text-center"
         onClick={() => {
-          if (!isRoleLoading && !isWorkgroupLoading)
-            if (isEditRole) {
-              addToast(roleErrorToast)
+        //   if (!isRoleLoading && !isWorkgroupLoading)
+        //     if (isEditRole) {
+        //       addToast(roleErrorToast)
 
-              return
-            }
-          if (isEditGroup) {
-            addWToast(GroupErrorToast)
-            return
-          }
+        //       return
+        //     }
+        //   if (isEditGroup) {
+        //     addWToast(GroupErrorToast)
+        //     return
+        //   }
           setCollapsibleVisible(item)
         }}
       >
         <strong>{item.phonenumber}</strong>
-      </CTableDataCell>
+      </CTableDataCell> */}
       <CTableDataCell
         onClick={() => {
-          if (!isRoleLoading && !isWorkgroupLoading)
-            if (isEditRole) {
-              addToast(roleErrorToast)
+          //   if (!isRoleLoading && !isWorkgroupLoading)
+          //     if (isEditRole) {
+          //       addToast(roleErrorToast)
 
-              return
-            }
-          if (isEditGroup) {
-            addWToast(GroupErrorToast)
-            return
-          }
+          //       return
+          //     }
+          //   if (isEditGroup) {
+          //     addWToast(GroupErrorToast)
+          //     return
+          //   }
           setCollapsibleVisible(item)
         }}
       >
-        {item.status ? (
+        {/* {item.status ? (
           <CBadge color="success">{'Active'}</CBadge>
         ) : (
           <CBadge color="danger">{'Deactivated'}</CBadge>
-        )}
+        )} */}
+        <CProgress thin className="mt-2" precision={1} color="info" value={40} />
         {/* <strong>10 sec ago</strong> */}
       </CTableDataCell>
 
       <CTableDataCell className="text-center">
         <CPopover
           title="More Actions"
-          content={renderPopOverContent(item, selectUser)}
+          content={renderPopOverContent(item, selectRequest)}
           placement="bottom"
         >
           <CIcon name="cil-settings" size="lg" />
@@ -746,7 +458,7 @@ const renderUsers = (
     </CTableRow>
   ))
 
-  return allUsers
+  return allRequest
 }
 
 const renderPopOverContent = (item, selectUser) => (
@@ -944,4 +656,4 @@ const renderGroups = (
   </div>
 )
 
-export default Users
+export default Requests

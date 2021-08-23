@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { BASE_URL, FETCH_ALL_WORKGROUPS } from '../../assets/constants'
+import { BASE_URL, FETCH_ALL_WORKGROUPS, provideToken } from '../../assets/constants'
 
 export const fetchAllgroups = () => (dispatch) => {
   axios
@@ -65,3 +65,20 @@ export const deleteWorkgroup = (id, handleErrors, handleSuccess, setIsLoading) =
       }
     })
 }
+
+export const viewWorkgroupUsers =
+  (id, handleErrors, handleSuccess, setIsUsersLoading) => (dispatch) => {
+    setIsUsersLoading(true)
+    axios
+      .get(`${BASE_URL}api/v1/workgroup/${id}/users`)
+      .then((response) => {
+        setIsUsersLoading(false)
+        handleSuccess(response.data)
+      })
+      .catch((error) => {
+        setIsUsersLoading(false)
+        if (error.response !== undefined) {
+          handleErrors(error.response.data)
+        }
+      })
+  }
