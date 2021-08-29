@@ -71,9 +71,15 @@ const AppHeaderDropdown = () => {
           </CBadge>
         </CDropdownItem>
         <CDropdownDivider />
-        <CDropdownItem href="#">
+        <CDropdownItem
+          onClick={() => {
+            localStorage.removeItem('AUTH')
+            window.location.reload()
+          }}
+          component="button"
+        >
           <CIcon name="cil-lock-locked" className="me-2" />
-          Lock Account
+          Logout
         </CDropdownItem>
       </CDropdownMenu>
     </CDropdown>

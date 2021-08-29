@@ -4,6 +4,7 @@ import { sidebarToggleReducer } from './sidebar.reducer'
 import { userReducer } from './admin/users.reducer'
 import { groupReducer, userGroup } from './admin/group.reduce'
 import { roleReducer, userRole, rolesPermissions, permissions } from './admin/role.reducer'
+import { serviceReducer } from './admin/service.reducer'
 import { requestReducer } from './dashboard/requests.reducer'
 
 const allReducers = combineReducers({
@@ -18,6 +19,7 @@ const allReducers = combineReducers({
   rolesPermissions,
   permissions,
   requestReducer,
+  serviceReducer,
 })
 
 export default allReducers

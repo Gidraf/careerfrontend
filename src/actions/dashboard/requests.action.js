@@ -21,3 +21,57 @@ export const fetchAllRequests = () => (dispatch) => {
       }
     })
 }
+
+export const fetchRequestsData =
+  (id, handleSuccess, handleErrors, isLoading, setIsLoading) => (dispatch) => {
+    setIsLoading(true)
+    axios
+      .get(`${BASE_URL}api/v1/${id}/order-services`)
+      .then((response) => {
+        setIsLoading(false)
+        handleSuccess(response.data)
+      })
+      .catch((error) => {
+        setIsLoading(false)
+        console.log(error)
+        if (error.response !== undefined) {
+          handleErrors()
+        }
+      })
+  }
+
+export const generateClientReceipt =
+  (id, data, handleSuccess, handleErrors, isLoading, setIsLoading) => (dispatch) => {
+    setIsLoading(true)
+    axios
+      .post(`${BASE_URL}api/v1/${id}/receipt`, (data = data))
+      .then((response) => {
+        setIsLoading(false)
+        handleSuccess(response.data)
+      })
+      .catch((error) => {
+        setIsLoading(false)
+        console.log(error)
+        if (error.response !== undefined) {
+          handleErrors()
+        }
+      })
+  }
+
+export const assignJobToWorkgroup =
+  (id, data, handleSuccess, handleErrors, isLoading, setIsLoading) => (dispatch) => {
+    setIsLoading(true)
+    axios
+      .patch(`${BASE_URL}api/v1/${id}/assign/group`, (data = data))
+      .then((response) => {
+        setIsLoading(false)
+        handleSuccess(response.data)
+      })
+      .catch((error) => {
+        setIsLoading(false)
+        console.log(error)
+        if (error.response !== undefined) {
+          handleErrors()
+        }
+      })
+  }

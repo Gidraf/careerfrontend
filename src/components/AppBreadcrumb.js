@@ -24,8 +24,11 @@ const AppBreadcrumb = () => {
       const currentPathname = `${prev}/${curr}`
       const name = getRouteName(currentPathname, routes)
       let canShow = false
-      if (name === `Users` || name === 'Workgroups' || name === 'Roles') {
+      if (name === `Users` || name === 'Workgroups' || name === 'Roles' || 'Services') {
         canShow = true
+      }
+      if (name === `Requests`) {
+        canShow = false
       }
       breadcrumbs.push({
         pathname: currentPathname,

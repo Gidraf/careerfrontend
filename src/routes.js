@@ -61,6 +61,8 @@ const UserForm = React.lazy(() => import('./views/forms/UserForm'))
 const WorkgroupForm = React.lazy(() => import('./views/forms/WorkgroupForm'))
 const RoleForm = React.lazy(() => import('./views/forms/RoleForm'))
 const Requests = React.lazy(() => import('./views/dashboard/Requests'))
+const Services = React.lazy(() => import('./views/admin/Services'))
+const ServiceForm = React.lazy(() => import('./views/forms/ServicesForm'))
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
@@ -73,6 +75,8 @@ const routes = [
   { path: '/add_workgroups', name: 'Add Workgroups', component: WorkgroupForm },
   { path: '/add_roles', name: 'Add Roles', component: RoleForm },
   { path: '/requests', name: 'Requests', component: Requests },
+  { path: '/services', name: 'Services', component: Services },
+  { path: '/add_services', name: 'Add Services', component: ServiceForm },
   // { path: '/theme', name: 'Theme', component: Colors, exact: true },
   // { path: '/theme/colors', name: 'Colors', component: Colors },
   // { path: '/theme/typography', name: 'Typography', component: Typography },

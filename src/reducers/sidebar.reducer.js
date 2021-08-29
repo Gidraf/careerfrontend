@@ -17,20 +17,20 @@ if (
   url[url.length - 1] === 'admin' ||
   url[url.length - 1] === 'workgroups' ||
   url[url.length - 1] === 'roles' ||
-  url[url.length - 1] === 'settings'
+  url[url.length - 1] === 'services'
 ) {
   initialState = [
     { title: 'Users', to: '/users' },
     { title: 'Workgroups', to: '/workgroups' },
     { title: 'Roles', to: '/roles' },
-    { title: 'Settings', to: '/settings' },
+    { title: 'Services', to: '/services' },
   ]
 } else if (url[url.length - 1] === 'reports') {
   initialState = [
     { title: 'Users', to: '/users' },
     { title: 'Workgroups', to: '/workgroups' },
     { title: 'Roles', to: '/roles' },
-    { title: 'Settings', to: '/settings' },
+    { title: 'Services', to: '/services' },
   ]
 }
 
@@ -47,7 +47,7 @@ export const sidebarToggleReducer = (state = initialState, action) => {
         { title: 'Users', to: '/users' },
         { title: 'Workgroups', to: '/workgroups' },
         { title: 'Roles', to: '/roles' },
-        { title: 'Settings', to: '/settings' },
+        { title: 'Services', to: '/services' },
       ]
     case REPORTS_SELECTED:
       return [
