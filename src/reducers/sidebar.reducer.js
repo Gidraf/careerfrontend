@@ -8,7 +8,7 @@ import {
 let initialState = [
   { title: 'Analytics', to: '/analytics' },
   { title: 'Requests', to: '/requests' },
-  { title: 'Customers', to: '/customers' },
+  { title: 'Jobs', to: '/jobs' },
 ]
 const url = window.location.href.split('/')
 
@@ -40,7 +40,7 @@ export const sidebarToggleReducer = (state = initialState, action) => {
       return [
         { title: 'Analytics', to: '/analytics' },
         { title: 'Requests', to: '/requests' },
-        { title: 'Customers', to: '/customers' },
+        { title: 'Jobs', to: '/jobs' },
       ]
     case ADMIN_SELECTED:
       return [

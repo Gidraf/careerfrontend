@@ -6,6 +6,7 @@ import { groupReducer, userGroup } from './admin/group.reduce'
 import { roleReducer, userRole, rolesPermissions, permissions } from './admin/role.reducer'
 import { serviceReducer } from './admin/service.reducer'
 import { requestReducer } from './dashboard/requests.reducer'
+import { jobReducer } from './dashboard/jobs.reducer'
 
 const allReducers = combineReducers({
   ordersReducer,
@@ -20,6 +21,7 @@ const allReducers = combineReducers({
   permissions,
   requestReducer,
   serviceReducer,
+  jobReducer,
 })
 
 export default allReducers

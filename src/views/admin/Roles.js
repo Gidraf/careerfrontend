@@ -487,7 +487,7 @@ const renderPermissions = (
   activeKey,
   setActiveKey,
 ) => (
-  <CAccordion style={{ width: '380px' }}>
+  <CAccordion style={{ width: '450px' }}>
     {permissions &&
       Object.entries(permissions).map((item, i) => {
         const [dept, perm] = item

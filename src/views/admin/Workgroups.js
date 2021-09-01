@@ -324,7 +324,12 @@ const renderGroups = (
   collapsibleVisible,
   isUsersLoading,
 ) => {
-  const allGroups = groups.map((item, i) => (
+  let filteredGroups = groups
+  const currentGroup = groups.filter((role) => role.id === id)
+  if (currentGroup.length > 0 && collapsibleVisible) {
+    filteredGroups = currentGroup
+  }
+  const allGroups = filteredGroups.map((item, i) => (
     <CTableRow key={i} style={{ cursor: 'pointer' }}>
       <CTableDataCell onClick={() => !isUsersLoading && setCollapsibleVisible(item)}>
         <div>{item.name}</div>

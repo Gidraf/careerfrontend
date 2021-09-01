@@ -60,12 +60,6 @@ import { fetchAllgroups } from '../../actions/admin/group.action'
 
 const Requests = () => {
   const dispatch = useDispatch()
-  //   const [sirName, setSirName] = useState('')
-  //   const [otherName, setOtherName] = useState('')
-  //   const [lastName, setLastName] = useState('')
-  //   const [email, setEmail] = useState('')
-  //   const [username, setuserName] = useState('')
-  //   const [phonenumber, setPhonenumber] = useState('')
   const [errors, setErrors] = useState({})
   const [isLoading, setIsLoading] = useState(false)
   const [visible, setVisible] = useState(false)
@@ -125,6 +119,7 @@ const Requests = () => {
     setTransactionId(data.order.transaction_Id)
     setOffer(data.order.amount)
     setUserJobWorkgroup(data.order.group)
+    setDueDate(data.order.due_date)
     // dispatch(fetchAllRequests())
   }
 
@@ -140,7 +135,12 @@ const Requests = () => {
       setId(null)
       setCurrentRequest({})
       setUserJobWorkgroup(null)
+      setTransactionId('')
+      setOffer(0)
       setAction('')
+      setpackage('Select Client Package')
+      setDueDate('')
+      setServciesSelected([])
       //   setUserRoles([])
       return
     }
@@ -215,7 +215,7 @@ const Requests = () => {
     setId(null)
     setVisible(false)
     setOffer(0)
-    setpackage('Select Client Package')
+    // setpackage('Select Client Package')
     setAction('')
     setTransactionId('')
     setisSucess(false)
@@ -414,7 +414,7 @@ const Requests = () => {
                               aria-label="packages"
                             >
                               <option value={orderPackage}>{orderPackage}</option>
-                              <option value="">Normal Services</option>
+                              <option value="Normal Services">Normal Services</option>
                               <option value="gold">Gold</option>
                               <option value="silver">Silver</option>
                               <option value="bronze">Bronze</option>
@@ -714,7 +714,7 @@ const Requests = () => {
                         Assign Group
                       </CButton>
                     )}
-                    {actionState !== 'grouo' && actionState !== 'receipt' && jobWorkgroup && (
+                    {actionState !== 'group' && actionState !== 'receipt' && jobWorkgroup && (
                       <CListGroupItem>
                         <strong>{jobWorkgroup.name}</strong>
 

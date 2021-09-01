@@ -27,7 +27,7 @@ const AppBreadcrumb = () => {
       if (name === `Users` || name === 'Workgroups' || name === 'Roles' || 'Services') {
         canShow = true
       }
-      if (name === `Requests`) {
+      if (name === `Requests` || name === 'Jobs') {
         canShow = false
       }
       breadcrumbs.push({
