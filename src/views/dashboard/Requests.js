@@ -94,6 +94,7 @@ const Requests = () => {
   const [isGeneratingRecipt, setisGeneratingRecipt] = useState(false)
   const [additionalComments, setadditionalComments] = useState('')
   const [dueDate, setDueDate] = useState('')
+  const [totalAmount, setTotal] = useState(0)
 
   useEffect(() => {
     dispatch(fetchAllRequests())
@@ -173,7 +174,7 @@ const Requests = () => {
   const generateReceipt = () => {
     const servId = []
     const data = {
-      offer: offer,
+      offer: offer ? offer : 0,
       package: orderPackage,
       request_id: id,
       transaction_id: transactionId,
@@ -262,7 +263,7 @@ const Requests = () => {
       <CToastHeader close>
         <strong className="me-auto">Select Customer Package</strong>
       </CToastHeader>
-      <CToastBody>Please Select Customer Service</CToastBody>
+      <CToastBody>Please Select Client Package</CToastBody>
     </CToast>
   )
 
@@ -512,6 +513,9 @@ const Requests = () => {
                       <CCol className="col-9">
                         <CCardTitle>
                           {actionState === 'group' ? 'Additonal Information' : 'Services Requested'}
+                          {actionState === 'receipt' && (
+                            <span style={{ float: 'right' }}>{totalAmount}</span>
+                          )}
                         </CCardTitle>
                       </CCol>
                       <CCol className="col-3">
@@ -550,10 +554,14 @@ const Requests = () => {
                                 onClick={() => {
                                   if (servicesSelcted.filter((s) => s.id === item.id).length == 0) {
                                     setServciesSelected([...servicesSelcted, item])
+                                    const total = totalAmount + Number(item.price)
+                                    setTotal(total)
                                   } else {
                                     setServciesSelected(
                                       servicesSelcted.filter((s) => s.id !== item.id),
                                     )
+                                    const total = totalAmount - Number(item.price)
+                                    setTotal(total)
                                   }
                                   // setisEditPermission(true)
                                 }}
@@ -572,6 +580,8 @@ const Requests = () => {
                             )}
                             <br />
                             <small className="small text-medium-emphasis">{item.description}</small>
+                            <br />
+                            <small className="small text-medium-emphasis">{item.price}</small>
                           </CListGroupItem>
                         ))}
                       {actionState === 'receipt' &&
@@ -584,10 +594,17 @@ const Requests = () => {
                                 onClick={() => {
                                   if (servicesSelcted.filter((s) => s.id === item.id).length == 0) {
                                     setServciesSelected([...servicesSelcted, item])
+                                    const total = totalAmount + Number(item.price)
+                                    setTotal(total)
                                   } else {
                                     setServciesSelected(
                                       servicesSelcted.filter((s) => s.id !== item.id),
                                     )
+                                    let total = 0
+                                    if (totalAmount > Number(item.price)) {
+                                      total = totalAmount - Number(item.price)
+                                    }
+                                    setTotal(total)
                                   }
                                   // setisEditPermission(true)
                                 }}
@@ -606,6 +623,8 @@ const Requests = () => {
                             )}
                             <br />
                             <small className="small text-medium-emphasis">{item.description}</small>
+                            <br />
+                            <small className="small text-medium-emphasis">{item.price}</small>
                           </CListGroupItem>
                         ))}
                       {actionState === 'group' && (
@@ -717,7 +736,8 @@ const Requests = () => {
                     {actionState !== 'group' && actionState !== 'receipt' && jobWorkgroup && (
                       <CListGroupItem>
                         <strong>{jobWorkgroup.name}</strong>
-
+                        <br />
+                        <strong>Due Date: </strong>
                         <small className="small text-medium-emphasis">
                           {currentRequest.order && currentRequest.order.due_date}
                         </small>
@@ -788,6 +808,7 @@ const renderequests = (
         <strong>{item.client_email}</strong>
       </CTableDataCell>
       <CTableDataCell
+        className="text-center"
         onClick={() => {
           //   if (!isRoleLoading && !isWorkgroupLoading)
           //     if (isEditRole) {

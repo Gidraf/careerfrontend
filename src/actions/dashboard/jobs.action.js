@@ -75,3 +75,25 @@ export const assignJobToUser =
         }
       })
   }
+
+export const sendDraftEmail =
+  (id, data, handleSuccess, handleErrors, isLoading, setIsLoading) => (dispatch) => {
+    setIsLoading(true)
+    axios
+      .post(`${BASE_URL}api/v1/${id}/send/draft`, data, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+      .then((response) => {
+        setIsLoading(false)
+        handleSuccess(response.data)
+      })
+      .catch((error) => {
+        setIsLoading(false)
+        console.log(error)
+        if (error.response !== undefined) {
+          handleErrors()
+        }
+      })
+  }

@@ -8,6 +8,7 @@ import {
   CCard,
   CCardTitle,
   CForm,
+  CFormCheck,
   CToast,
   CToaster,
   CToastBody,
@@ -52,11 +53,14 @@ import {
   startAJob,
   assignJobToUser,
   fetchJobsData,
+  sendDraftEmail,
 } from '../../actions/dashboard/jobs.action'
+import { INITIAL_DRAFT_MESSAGE, FINAL_DRAFT_MESSAGE } from './../../assets/constants'
 import { fetchAllUsers } from '../../actions/admin/user.action'
 // import { fetchRequestsData } from '../../actions/dashboard/requests.action'
 
 import { viewWorkgroupUsers } from '../../actions/admin/group.action'
+import '../../scss/jobs.scss'
 
 const Jobs = () => {
   const dispatch = useDispatch()
@@ -86,13 +90,29 @@ const Jobs = () => {
   const wToaster = useRef()
   const [isAddingRoleLoading, setIsAddingRoleLoading] = useState(false)
   const [isAddingGroupLoading, setIsAddingGroupLoading] = useState(false)
-
+  const [draftMessage, setDraftMessage] = useState(INITIAL_DRAFT_MESSAGE)
+  const [draftType, setDraftType] = useState('')
+  const [currentService, setCurrentService] = useState('')
+  const [isSendingDraft, setIsSendingDraf] = useState(false)
   const [isStartingJob, setisStartingJob] = useState(false)
   const [additionalComments, setadditionalComments] = useState('')
   const [dueDate, setDueDate] = useState('')
   const [assignedUsers, setAssignedUsers] = useState({})
   const [groupUsers, setWorkgroupUsers] = useState({})
   const [isUsersLoading, setIsUsersLoading] = useState(false)
+  const [uploadedFile, setUploadedFile] = useState(null)
+  const [file, setFile] = useState(null)
+  const [requireFile, setRequireFiles] = useState(true)
+  const [messageType, setMessageType] = useState('')
+  const [isSending, setIsSending] = useState(false)
+  const [sendindErrors, setSendingErrors] = useState({})
+
+  let currentUser = null
+  const user = localStorage.getItem('AUTH')
+
+  if (user) {
+    currentUser = JSON.parse(user)
+  }
 
   useEffect(() => {
     dispatch(fetchAllJobs())
@@ -114,6 +134,8 @@ const Jobs = () => {
     setCurrentJob(data)
     setId(data.order.id)
     setServciesSelected(data.services)
+    // setDraftMessage(INITIAL_DRAFT_MESSAGE.replace('[name]', data.order.customer_name))
+
     // setpackage(data.order.order_package)
     // setTransactionId(data.order.transaction_Id)
     // setOffer(data.order.amount)
@@ -127,6 +149,13 @@ const Jobs = () => {
     // setCurrentJob(data)
     setAssignedUsers({})
     dispatch(fetchJobsData(id, handleSuccess, handleErrors, isLoading, setIsLoading))
+    if (isSendingDraft) {
+      setIsSendingDraf(false)
+      setFile(null)
+      setDraftType('')
+      setCurrentService('')
+      addToast(emailSendToast)
+    }
   }
 
   const handleUserSuccess = (data) => {
@@ -139,6 +168,7 @@ const Jobs = () => {
       setId(null)
       setCurrentJob({})
       setAssignedUsers({})
+      setIsSendingDraf(false)
       //   setUserJobWorkgroup(null)
       //   setTransactionId('')
       //   setOffer(0)
@@ -150,6 +180,7 @@ const Jobs = () => {
       return
     }
     setId(item.id)
+    setDraftMessage(INITIAL_DRAFT_MESSAGE.replace('[name]', item.customer_name))
     setCollapsible(true)
     dispatch(fetchJobsData(item.id, handleSuccess, handleErrors, isLoading, setIsLoading))
     dispatch(viewWorkgroupUsers(item.group.id, handleErrors, handleUserSuccess, setIsUsersLoading))
@@ -193,6 +224,17 @@ const Jobs = () => {
     )
   }
 
+  const getBase64 = (file) => {
+    let reader = new FileReader()
+    reader.readAsDataURL(file)
+    reader.onload = function () {
+      console.log(reader.result)
+    }
+    reader.onerror = function (error) {
+      console.log('Error: ', error)
+    }
+  }
+
   const resetModal = () => {
     setId(null)
     setVisible(false)
@@ -200,6 +242,15 @@ const Jobs = () => {
     setAction('')
 
     setisSucess(false)
+  }
+
+  const handleSelectFile = (e) => {
+    let file = e.target.files[0]
+    setSendingErrors({})
+    setFile(file)
+    const fileBase64 = getBase64(file)
+    setUploadedFile(fileBase64)
+    // console.log(uploadedFile)
   }
 
   const selectUserErrorToast = (
@@ -211,12 +262,12 @@ const Jobs = () => {
     </CToast>
   )
 
-  const jobGroupErrorToast = (
+  const emailSendToast = (
     <CToast placement="top-end" title="" autohide={true}>
       <CToastHeader close>
-        <strong className="me-auto">Select Group</strong>
+        <strong className="me-auto">Email has been sent</strong>
       </CToastHeader>
-      <CToastBody>Please Select a Workgroup</CToastBody>
+      <CToastBody>An Email has been sent to </CToastBody>
     </CToast>
   )
 
@@ -273,6 +324,7 @@ const Jobs = () => {
       <CTable striped hover responsive align="middle" className="mb-0 border">
         <CTableHead color="light">
           <CTableRow>
+            <CTableHeaderCell>ID</CTableHeaderCell>
             <CTableHeaderCell>Client Name</CTableHeaderCell>
             <CTableHeaderCell className="text-center">Client Email</CTableHeaderCell>
             <CTableHeaderCell>Package</CTableHeaderCell>
@@ -385,6 +437,14 @@ const Jobs = () => {
                             </CFormSelect>
                           </CListGroupItem>
                         ))}
+                      <CListGroupItem>
+                        {currentJob.order && currentJob.order.rate && (
+                          <>
+                            <strong>Ratings: </strong> <strong>{currentJob.order.rate}</strong>
+                            <p className="text-muted">{currentJob.order.comments}</p>
+                          </>
+                        )}
+                      </CListGroupItem>
                     </CListGroup>
                   </CCardBody>
                 </CCard>
@@ -418,6 +478,17 @@ const Jobs = () => {
                         Assign Users
                       </CButton>
                     )}
+                    {actionState !== 'user' && currentJob.order && currentJob.order.status && (
+                      <CButton
+                        onClick={() => {
+                          setIsSendingDraf(true)
+                        }}
+                        color="info"
+                        size="lg"
+                      >
+                        Send a Draft
+                      </CButton>
+                    )}
                   </CCardBody>
                 </CCard>
               </CCallout>
@@ -425,6 +496,148 @@ const Jobs = () => {
           </CRow>
         </CContainer>
       </CCollapse>
+      {isSendingDraft && (
+        <div className="compose-mail">
+          <div className="compose-header">
+            <h3>Send Draft</h3>
+            <CAvatar
+              style={{ position: 'absolute', top: '.5rem', right: '.5rem', cursor: 'pointer' }}
+              onClick={() => setIsSendingDraf(false)}
+              src="https://res.cloudinary.com/g-draf-inc/image/upload/v1557589368/delete_bl2bo8.png"
+              //   size="sm"
+            />
+          </div>
+          <div>
+            <CRow>
+              <CCol>
+                <CFormLabel style={{ marginLeft: '.5rem' }}>Select Service</CFormLabel>
+                <CFormSelect
+                  className={sendindErrors.service && 'is-invalid'}
+                  onChange={(e) => {
+                    setCurrentService(servicesSelcted.filter((s) => s.task_id == e.target.value)[0])
+                  }}
+                  style={{ padding: '.5rem', marginLeft: '.5rem' }}
+                >
+                  <option value="">Select Service</option>
+                  {servicesSelcted.map((item, i) => (
+                    <option
+                      disabled={
+                        !item.assigned_to ||
+                        !currentUser ||
+                        item.assigned_to.id !== currentUser.user_id
+                      }
+                      key={i}
+                      value={item.task_id}
+                    >
+                      {item.name}
+                    </option>
+                  ))}
+                </CFormSelect>
+              </CCol>
+              <CCol>
+                <CFormLabel style={{ marginLeft: '.5rem' }}>Select Draft Type</CFormLabel>
+                <CFormSelect
+                  onChange={(e) => {
+                    if (e.target.value === 'final') {
+                      setDraftMessage(FINAL_DRAFT_MESSAGE)
+                      setDraftType('final')
+                    } else {
+                      setDraftMessage(INITIAL_DRAFT_MESSAGE)
+                      setDraftType('draft')
+                    }
+                  }}
+                  className={sendindErrors.draftType && 'is-invalid'}
+                  style={{ padding: '.5rem' }}
+                >
+                  <option value="">Select Draft Type</option>
+                  <option value="draft">Draft</option>
+                  <option value="final">Final Draft</option>
+                </CFormSelect>
+              </CCol>
+            </CRow>
+            <CRow>
+              <CCol>
+                <CFormLabel style={{ marginLeft: '.5rem' }}>Select Service</CFormLabel>
+                <CFormControl
+                  accept="application/pdf"
+                  placeholder="Select file"
+                  type="file"
+                  className={sendindErrors.uploadedFile && 'is-invalid'}
+                  onChange={(e) => handleSelectFile(e)}
+                  style={{ padding: '.5rem', marginLeft: '.5rem' }}
+                ></CFormControl>
+                <CFormCheck
+                  onChange={(e) => (requireFile ? setRequireFiles(false) : setRequireFiles(true))}
+                  id="flexCheckChecked"
+                  label="Require Upload Upload"
+                  defaultChecked={requireFile}
+                />
+              </CCol>
+              <CCol>
+                {isSending && <CSpinner size="sm" color="primary"></CSpinner>}
+                {!isSending && (
+                  <CButton
+                    color="success"
+                    onClick={() => {
+                      if (!currentService) {
+                        setSendingErrors({ service: true })
+                        return
+                      }
+                      if (!draftType) {
+                        setSendingErrors({ draftType: true })
+                        return
+                      }
+                      if (!file && requireFile) {
+                        setSendingErrors({ uploadedFile: true })
+                        return
+                      }
+                      let formData = new FormData()
+
+                      formData.append('file', file)
+                      formData.append(
+                        'data',
+                        JSON.stringify({
+                          task_id: currentService.task_id,
+                          draft_type: draftType,
+                          message: draftMessage,
+                          require_file: requireFile,
+                        }),
+                      )
+                      dispatch(
+                        sendDraftEmail(
+                          currentService.task_id,
+                          formData,
+                          handleStartJobSuccess,
+                          handleErrors,
+                          isSending,
+                          setIsSending,
+                        ),
+                      )
+                    }}
+                    style={{ margin: '2rem', color: 'white' }}
+                  >
+                    Send Draft
+                  </CButton>
+                )}
+              </CCol>
+            </CRow>
+            <div style={{ width: '100%', height: '100%' }}>
+              <CFormControl
+                value={
+                  currentService
+                    ? draftMessage
+                        .replace('[service_name]', currentService.name)
+                        .replace('[service_name]', currentService.name)
+                    : draftMessage
+                }
+                onChange={(e) => setDraftMessage(e.target.value)}
+                component="textarea"
+                rows="13"
+              ></CFormControl>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   )
 }
@@ -448,6 +661,23 @@ const renderJobs = (
   }
   const allJobs = filteredRJobs.map((item, i) => (
     <CTableRow key={i} style={{ cursor: 'pointer' }}>
+      <CTableDataCell
+        onClick={() => {
+          //   if (!isRoleLoading && !isWorkgroupLoading)
+          //     if (isEditRole) {
+          //       addToast(roleErrorToast)
+          //       return
+          //     }
+          //   if (isEditGroup) {
+          //     addWToast(GroupErrorToast)
+          //     return
+          //   }
+          setCollapsibleVisible(item)
+        }}
+      >
+        <strong>{item.id}</strong>
+        {/* <small className="small text-medium-emphasis">{item.created_at}</small> */}
+      </CTableDataCell>
       <CTableDataCell
         onClick={() => {
           //   if (!isRoleLoading && !isWorkgroupLoading)
@@ -499,7 +729,7 @@ const renderJobs = (
           setCollapsibleVisible(item)
         }}
       >
-        <strong>{item.email_subject}</strong>
+        <strong>{item.order_package}</strong>
         {/* <div className="small text-medium-emphasis">{item.customer_ordered.registered_on}</div> */}
       </CTableDataCell>
       <CTableDataCell
@@ -605,7 +835,7 @@ const renderPopOverContent = (
   setId,
 ) => (
   <CListGroup>
-    {item.status !== 'started' && (
+    {!item.status && (
       <CListGroupItem
         onClick={() => {
           setAction('start')
