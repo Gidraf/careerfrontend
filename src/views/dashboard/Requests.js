@@ -95,9 +95,12 @@ const Requests = () => {
   const [additionalComments, setadditionalComments] = useState('')
   const [dueDate, setDueDate] = useState('')
   const [totalAmount, setTotal] = useState(0)
+  const [query, setquery] = useState('')
+  const [queryType, setqueryType] = useState('id')
+  const [pageSize, setPageSize] = useState(20)
 
   useEffect(() => {
-    dispatch(fetchAllRequests())
+    dispatch(fetchAllRequests(query, queryType, 1, pageSize))
     dispatch(fetchAllServices())
     dispatch(fetchAllgroups())
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
@@ -341,6 +344,17 @@ const Requests = () => {
               //   GroupErrorToast,
             )}
         </CTableBody>
+        {requests.has_next && (
+          <CButton
+            onClick={() => {
+              dispatch(fetchAllRequests(query, queryType, requests.next_num, pageSize))
+            }}
+            size="sm"
+            style={{ marginLeft: '250%', width: '10rem', marginTop: '.5rem' }}
+          >
+            Load More
+          </CButton>
+        )}
       </CTable>
       <CCollapse visible={collapsibleVisible}>
         <CContainer className="overflow-auto">

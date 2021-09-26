@@ -6,9 +6,13 @@ import {
   FETCH_USER_WORKGROUPS,
 } from '../../assets/constants'
 
-export const fetchAllRequests = () => (dispatch) => {
+export const fetchAllRequests = (query, quey_type, page, page_size) => (dispatch) => {
+  let url = `${BASE_URL}api/v1/requests?page=${page}&page_size=20`
+  if (query && quey_type) {
+    url = `${url}&query=${query}&query_type=${quey_type}`
+  }
   axios
-    .get(`${BASE_URL}api/v1/requests`)
+    .get(url)
     .then((response) => {
       dispatch({
         type: FETCH_ALL_REQUEST,
