@@ -36,10 +36,13 @@ import {
   CTableDataCell,
   CTableHead,
   CFormSelect,
+  CTableFoot,
   CTableHeaderCell,
   CTableRow,
   CPopover,
   CCallout,
+  CFormLabel,
+  CFormText,
 } from '@coreui/react'
 
 import { CChartLine } from '@coreui/react-chartjs'
@@ -51,6 +54,7 @@ import {
   fetchRequestsData,
   generateClientReceipt,
   assignJobToWorkgroup,
+  clearRequests,
 } from '../../actions/dashboard/requests.action'
 import { fetchAllServices } from '../../actions/admin/service.action'
 import { fetchAllgroups } from '../../actions/admin/group.action'
@@ -75,7 +79,7 @@ const Requests = () => {
 
   const reduceGroups = useSelector((state) => state.userGroup)
   const [isWorkgroupLoading, setIsWorkgroupLoading] = useState(false)
-  const [isRoleLoading, setIsRoleLoading] = useState(false)
+  const [isLoadingMore, setIsLoadingMore] = useState(false)
   const [jobWorkgroup, setUserJobWorkgroup] = useState(null)
   const [userRoles, setUserRoles] = useState([])
   const [isEditRole, setisEditRole] = useState(false)
@@ -269,7 +273,6 @@ const Requests = () => {
       <CToastBody>Please Select Client Package</CToastBody>
     </CToast>
   )
-
   return (
     <>
       <CToaster ref={toaster} push={toast} placement="top-end" />
@@ -313,9 +316,10 @@ const Requests = () => {
       <CTable striped hover responsive align="middle" className="mb-0 border">
         <CTableHead color="light">
           <CTableRow>
-            <CTableHeaderCell>Client Name</CTableHeaderCell>
+            <CTableHeaderCell>Request ID</CTableHeaderCell>
+            <CTableHeaderCell className="text-center">Client Name</CTableHeaderCell>
             <CTableHeaderCell className="text-center">Client Email</CTableHeaderCell>
-            <CTableHeaderCell>Email Subject</CTableHeaderCell>
+            <CTableHeaderCell className="text-center">Email Subject</CTableHeaderCell>
             <CTableHeaderCell className="text-center">Group Assigned</CTableHeaderCell>
             <CTableHeaderCell className="text-center">Status</CTableHeaderCell>
             {/* <CTableHeaderCell className="text-center">Request Type</CTableHeaderCell> */}
@@ -344,17 +348,74 @@ const Requests = () => {
               //   GroupErrorToast,
             )}
         </CTableBody>
-        {requests.has_next && (
-          <CButton
-            onClick={() => {
-              dispatch(fetchAllRequests(query, queryType, requests.next_num, pageSize))
-            }}
-            size="sm"
-            style={{ marginLeft: '250%', width: '10rem', marginTop: '.5rem' }}
-          >
-            Load More
-          </CButton>
-        )}
+        <div style={{ position: 'absolute', width: '70%', marginLeft: '5rem' }}>
+          <CRow>
+            <CCol sm="auto">
+              <strong>Search By:</strong>
+            </CCol>
+            <CCol>
+              <div className="mb-3">
+                <CFormSelect
+                  onChange={(e) => {
+                    setqueryType(e.target.value)
+                  }}
+                >
+                  <option value="id">Id</option>
+                  <option value="email">email</option>
+                </CFormSelect>
+              </div>
+            </CCol>
+            <CCol sm="auto">
+              <CFormControl
+                type={queryType === 'id' ? 'number' : 'email'}
+                onChange={(e) => {
+                  if (e.target.value) {
+                    setquery(e.target.value)
+                    return
+                  }
+                  // dispatch(clearRequests())
+                  dispatch(fetchAllRequests(query, queryType, 1, 20))
+                }}
+                placeholder="Search"
+              />
+            </CCol>
+            <CCol sm="auto">
+              <CButton
+                onClick={() => {
+                  dispatch(clearRequests())
+                  dispatch(fetchAllRequests(query, queryType, 1, pageSize, setIsLoadingMore))
+                }}
+                size="sm"
+              >
+                Search
+              </CButton>
+            </CCol>
+            <CCol>
+              {requests.has_next &&
+                !collapsibleVisible &&
+                (!isLoadingMore ? (
+                  <CButton
+                    onClick={() => {
+                      dispatch(
+                        fetchAllRequests(
+                          query,
+                          queryType,
+                          requests.next_num,
+                          pageSize,
+                          setIsLoadingMore,
+                        ),
+                      )
+                    }}
+                    size="sm"
+                  >
+                    Load More
+                  </CButton>
+                ) : (
+                  <CSpinner size="sm" style={{ marginTop: '.5rem' }} />
+                ))}
+            </CCol>
+          </CRow>
+        </div>
       </CTable>
       <CCollapse visible={collapsibleVisible}>
         <CContainer className="overflow-auto">
@@ -785,6 +846,9 @@ const renderequests = (
   }
   const allRequest = filteredRequest.map((item, i) => (
     <CTableRow key={i} style={{ cursor: 'pointer' }}>
+      <CTableDataCell>
+        <strong>{item.id}</strong>
+      </CTableDataCell>
       <CTableDataCell
         onClick={() => {
           //   if (!isRoleLoading && !isWorkgroupLoading)

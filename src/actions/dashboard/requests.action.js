@@ -4,27 +4,49 @@ import {
   FETCH_ALL_REQUEST,
   FETCH_USER_ROLES,
   FETCH_USER_WORKGROUPS,
+  CLEAR_ALL_REQUEST,
 } from '../../assets/constants'
 
-export const fetchAllRequests = (query, quey_type, page, page_size) => (dispatch) => {
-  let url = `${BASE_URL}api/v1/requests?page=${page}&page_size=20`
-  if (query && quey_type) {
-    url = `${url}&query=${query}&query_type=${quey_type}`
-  }
-  axios
-    .get(url)
-    .then((response) => {
-      dispatch({
-        type: FETCH_ALL_REQUEST,
-        payload: response.data,
-      })
-    })
-    .catch((error) => {
-      console.log(error)
-      if (error.response !== undefined) {
-      }
-    })
+export const clearRequests = () => (dispatch) => {
+  dispatch({
+    type: CLEAR_ALL_REQUEST,
+    payload: [],
+    next_num: 1,
+    has_next: false,
+  })
 }
+
+export const fetchAllRequests =
+  (query, quey_type, page, page_size, setIsLoadingMore) => (dispatch) => {
+    if (setIsLoadingMore) {
+      setIsLoadingMore(true)
+    }
+    let url = `${BASE_URL}api/v1/requests?page=${page}&page_size=20`
+    if (query && quey_type) {
+      url = `${url}&query=${query}&query_type=${quey_type}`
+    }
+    axios
+      .get(url)
+      .then((response) => {
+        dispatch({
+          type: FETCH_ALL_REQUEST,
+          payload: response.data.result,
+          next_num: response.data.next_num,
+          has_next: response.data.has_next,
+        })
+        if (setIsLoadingMore) {
+          setIsLoadingMore(false)
+        }
+      })
+      .catch((error) => {
+        console.log(error)
+        if (error.response !== undefined) {
+        }
+        if (setIsLoadingMore) {
+          setIsLoadingMore(false)
+        }
+      })
+  }
 
 export const fetchRequestsData =
   (id, handleSuccess, handleErrors, isLoading, setIsLoading) => (dispatch) => {
