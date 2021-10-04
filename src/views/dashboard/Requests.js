@@ -510,7 +510,7 @@ const Requests = () => {
                                   setOffer(e.target.value)
                                 }}
                                 size="lg"
-                                placeholder={!errors.transaction_Id ? 'Offer' : errors.offer[0]}
+                                placeholder={!errors.offer ? 'Offer' : errors.offer[0]}
                               />
                             </CInputGroup>
                           </CListGroupItem>
