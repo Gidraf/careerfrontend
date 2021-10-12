@@ -52,7 +52,7 @@ const BookSlot = () => {
         <CRow className="justify-content-center">
           <CCol md="8">
             <CCardGroup>
-              <CCard className="" style={{ width: '100%' }}>
+              <CCard className="" style={{ width: '80%', margin: 'auto', marginTop: '-11rem' }}>
                 <CCardHeader>
                   <CCardTitle style={{ color: 'black', textAlign: 'center' }}>
                     JoanWinningCV 40 Minutes Consultation
