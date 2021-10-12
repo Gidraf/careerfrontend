@@ -17,6 +17,7 @@ const Login = React.lazy(() => import('./views/pages/login/Login'))
 const Register = React.lazy(() => import('./views/pages/register/Register'))
 const Page404 = React.lazy(() => import('./views/pages/page404/Page404'))
 const Page500 = React.lazy(() => import('./views/pages/page500/Page500'))
+const BookSlot = React.lazy(() => import('./views/pages/events/BookSlot'))
 
 const App = () => {
   // const [cookies, setCookie] = useCookies(['AUTH'])
@@ -26,6 +27,7 @@ const App = () => {
     <Router>
       <React.Suspense fallback={loading}>
         <Switch>
+          <Route path="/book-slot" name="Book Slot" render={(props) => <BookSlot {...props} />} />
           {!cookies && (
             <Route path="/" name="Login Page" render={(props) => <Login {...props} />} />
           )}
