@@ -30,6 +30,7 @@ const BookSlot = () => {
   const [additonalComments, setAdditonalComments] = useState('')
   const [value, onChange] = useState(new Date())
   const [isLoading, setIsLoading] = useState(false)
+  const [actionState, setActionState] = useState('date')
   const { cookies, setCookie } = useCookies(['AUTH'])
 
   const handleErrors = (errors) => {
@@ -59,7 +60,15 @@ const BookSlot = () => {
                   </CCardTitle>
                 </CCardHeader>
                 <CCardBody className="text-center">
-                  <Calendar style={{ width: '100px' }} onChange={onChange} value={value} />
+                  {actionState === 'date' && (
+                    <Calendar
+                      style={{ width: '100px' }}
+                      onChange={(event) => {
+                        setActionState('time')
+                      }}
+                      value={value}
+                    />
+                  )}
                 </CCardBody>
               </CCard>
               <CCard className="p-4" style={{ width: '100%' }}>
