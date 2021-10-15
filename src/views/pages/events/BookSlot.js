@@ -17,6 +17,8 @@ import {
   CRow,
   CCardHeader,
   CCardTitle,
+  CListGroupItem,
+  CListGroup,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import { loginUser } from '../../../actions/admin/auth.action'
@@ -68,6 +70,21 @@ const BookSlot = () => {
                       }}
                       value={value}
                     />
+                  )}
+                  {actionState === 'time' && (
+                    <CListGroup>
+                      {' '}
+                      <CListGroupItem component="button">Assign/Remove Permission</CListGroupItem>
+                      <CListGroupItem component="button" onClick={() => {}}>
+                        {' '}
+                        Edit{' '}
+                      </CListGroupItem>{' '}
+                      <CListGroupItem component="button" onClick={() => {}}>
+                        {' '}
+                        Delete{' '}
+                      </CListGroupItem>{' '}
+                      <CListGroupItem component="button">View Permissions</CListGroupItem>{' '}
+                    </CListGroup>
                   )}
                 </CCardBody>
               </CCard>
