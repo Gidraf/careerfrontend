@@ -94,6 +94,27 @@ const BookSlot = () => {
             </CCardGroup>
           </CCol>
         </CRow>
+        <CRow>
+          <CCol>
+            <CButton
+              size="lg"
+              onClick={() => {
+                if (actionState === 'time') {
+                  setActionState('date')
+                }
+              }}
+              color="secondary"
+            >
+              Back
+            </CButton>
+          </CCol>
+          <CCol>
+            {' '}
+            <CButton size="lg" color="secondary">
+              Next
+            </CButton>{' '}
+          </CCol>
+        </CRow>
       </CContainer>
     </div>
   )
