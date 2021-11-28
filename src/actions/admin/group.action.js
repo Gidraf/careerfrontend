@@ -82,3 +82,20 @@ export const viewWorkgroupUsers =
         }
       })
   }
+
+export const connectGroupToGmail =
+  (data, handleErrors, handleSuccess, setIsLoading) => (dispatch) => {
+    setIsLoading(true)
+    axios
+      .post(`${BASE_URL}api/v1/teams/gmail`, data)
+      .then((response) => {
+        setIsLoading(false)
+        handleSuccess(response.data)
+      })
+      .catch((error) => {
+        setIsLoading(false)
+        if (error.response !== undefined) {
+          handleErrors(error.response.data)
+        }
+      })
+  }

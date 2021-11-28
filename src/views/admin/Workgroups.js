@@ -1,6 +1,6 @@
 import React, { lazy, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-
+import GoogleLogin from 'react-google-login'
 import {
   CAvatar,
   CButton,
@@ -46,6 +46,7 @@ import {
   editWorkgroup,
   deleteWorkgroup,
   viewWorkgroupUsers,
+  connectGroupToGmail,
 } from '../../actions/admin/group.action'
 
 const Workgroups = () => {
@@ -63,6 +64,7 @@ const Workgroups = () => {
   const [collapsibleVisible, setCollapsible] = useState(false)
   const [groupUsers, setWorkgroupUsers] = useState({})
   const [isUsersLoading, setIsUsersLoading] = useState(false)
+  const [groupToken, setGroupToken] = useState(null)
 
   const groups = useSelector((state) => state.groupReducer)
   useEffect(() => dispatch(fetchAllgroups()), []) // eslint-disable-line react-hooks/exhaustive-deps
@@ -83,14 +85,30 @@ const Workgroups = () => {
     setWorkgroupUsers(data)
   }
 
+  const responseGoogle = (response) => {
+    dispatch(
+      connectGroupToGmail(
+        {
+          auth_code: response.code,
+          group_id: id,
+        },
+        handleErrors,
+        handleSuccess,
+        setCollapsibleVisible,
+      ),
+    )
+  }
+
   const setCollapsibleVisible = (item) => {
     if (collapsibleVisible) {
       setCollapsible(false)
       setId(null)
       setWorkgroupUsers({})
+      setGroupToken(null)
       return
     }
     setId(item.id)
+    setGroupToken(item.token_id)
     setCollapsible(true)
 
     dispatch(viewWorkgroupUsers(item.id, handleErrors, handleUserSuccess, setIsUsersLoading))
@@ -102,6 +120,7 @@ const Workgroups = () => {
     setName(item.name)
     setDescription(item.description)
     setEmail(item.email)
+    setGroupToken(item.token_id)
     setVisible(true)
   }
 
@@ -130,6 +149,7 @@ const Workgroups = () => {
     setDescription('')
     setEmail('')
     setisSucess(false)
+    setGroupToken('')
   }
 
   return (
@@ -293,18 +313,32 @@ const Workgroups = () => {
                   <CCardHeader>
                     <CCardTitle>Tasks</CCardTitle>
                   </CCardHeader>
+                  <CCardBody></CCardBody>
+                </CCard>
+              </CCallout>
+            </CCol>
+            <CCol>
+              <CCallout color="primary" style={{ padding: 0 }}>
+                <CCard className="mt-1" style={{ marginTop: 0 }}>
+                  <CCardHeader>
+                    <CCardTitle>Configurations</CCardTitle>
+                  </CCardHeader>
                   <CCardBody>
-                    {/* <CListGroup>
-                      {isUsersLoading && <CSpinner component="span" aria-hidden="true" />}
-                      {rolesusers.result &&
-                        rolesusers.result.map((item, i) => (
-                          <CListGroupItem key={i}>
-                            <strong>{`${item.sir_name} ${item.last_name}`}</strong>
-                            <br />
-                            <small className="small text-medium-emphasis">{item.email}</small>
-                          </CListGroupItem>
-                        ))}
-                    </CListGroup> */}
+                    {!groupToken ? (
+                      <GoogleLogin
+                        clientId="973683055487-qp9hfrqpaefunvgtts3717dtohur8cqn.apps.googleusercontent.com"
+                        buttonText="Connect to Gmail"
+                        onSuccess={responseGoogle}
+                        onFailure={responseGoogle}
+                        accessType="offline"
+                        responseType="code"
+                        prompt="consent"
+                        scope={'https://www.googleapis.com/auth/gmail.modify'}
+                        cookiePolicy={'single_host_origin'}
+                      />
+                    ) : (
+                      <CButton>Disconnect</CButton>
+                    )}
                   </CCardBody>
                 </CCard>
               </CCallout>

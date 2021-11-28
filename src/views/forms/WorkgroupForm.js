@@ -57,7 +57,7 @@ const WorkgroupForm = () => {
   }
 
   return (
-    // <div className="bg-light min-vh-100 d-flex flex-row align-items-center">
+    // <div className="flex-row bg-light min-vh-100 d-flex align-items-center">
     <CContainer>
       <CModal visible={visible} onDismiss={() => setVisible(false)}>
         <CModalHeader onDismiss={() => setVisible(false)}>
