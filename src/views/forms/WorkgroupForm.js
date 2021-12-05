@@ -31,6 +31,7 @@ const WorkgroupForm = () => {
   const [errors, setErrors] = useState({})
   const [visible, setVisible] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [topic, setTopic] = useState('')
   const dispatch = useDispatch()
   const history = useHistory()
 
@@ -48,6 +49,7 @@ const WorkgroupForm = () => {
           name: name,
           description: description,
           email: email,
+          topic: topic,
         },
         handleErrors,
         handleSuccess,
@@ -139,6 +141,22 @@ const WorkgroupForm = () => {
                     }}
                     size="lg"
                     placeholder={!errors.email ? 'Workgroup Email' : errors.email[0]}
+                  />
+                </CInputGroup>
+                <CInputGroup className="mb-3">
+                  <CInputGroupText>
+                    <CIcon name="cil-note" />
+                  </CInputGroupText>
+                  <CFormControl
+                    value={topic}
+                    type="text"
+                    className={errors.topic && 'is-invalid'}
+                    onChange={(e) => {
+                      setErrors({})
+                      setTopic(e.target.value)
+                    }}
+                    size="lg"
+                    placeholder={!errors.topic ? 'Workgroup Topic' : errors.email[0]}
                   />
                 </CInputGroup>
 
