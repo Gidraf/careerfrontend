@@ -54,6 +54,7 @@ const Workgroups = () => {
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [email, setEmail] = useState('')
+  const [topic, setTopic] = useState('')
 
   const [errors, setErrors] = useState({})
   const [isLoading, setIsLoading] = useState(false)
@@ -121,6 +122,7 @@ const Workgroups = () => {
     setDescription(item.description)
     setEmail(item.email)
     setGroupToken(item.token_id)
+    setTopic(item.topic)
     setVisible(true)
   }
 
@@ -133,6 +135,7 @@ const Workgroups = () => {
             name: name,
             description: description,
             email: email,
+            topic: topic,
           },
           handleErrors,
           handleSuccess,
@@ -150,6 +153,7 @@ const Workgroups = () => {
     setEmail('')
     setisSucess(false)
     setGroupToken('')
+    setTopic('')
   }
 
   return (
@@ -192,6 +196,20 @@ const Workgroups = () => {
                   }}
                   size="lg"
                   placeholder={!errors.email ? 'Email' : errors.email[0]}
+                />
+              </CInputGroup>
+              <CInputGroup className="mb-3">
+                <CInputGroupText></CInputGroupText>
+                <CFormControl
+                  value={topic}
+                  type="text"
+                  className={errors.topic && 'is-invalid'}
+                  onChange={(e) => {
+                    setErrors({})
+                    setTopic(e.target.value)
+                  }}
+                  size="lg"
+                  placeholder={!errors.topic ? 'Topic' : errors.topic[0]}
                 />
               </CInputGroup>
               <CInputGroup className="mb-3">
