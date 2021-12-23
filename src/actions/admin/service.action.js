@@ -18,7 +18,7 @@ export const fetchAllServices = () => (dispatch) => {
     .catch((error) => {
       console.log(error)
       if (error.response !== undefined) {
-        if (error.response.status > 400) {
+        if (error.response.status === 401 || error.response.status === 403) {
           window.localStorage.removeItem('AUTH')
           window.location.reload()
         }
@@ -37,7 +37,7 @@ export const saveService = (data, handleErrors, handleSuccess, setIsLoading) => 
     .catch((error) => {
       setIsLoading(false)
       if (error.response !== undefined) {
-        if (error.response.status > 400) {
+        if (error.response.status === 401 || error.response.status === 403) {
           window.localStorage.removeItem('AUTH')
           window.location.reload()
         }
@@ -57,7 +57,7 @@ export const editService = (id, data, handleErrors, handleSuccess, setIsLoading)
     .catch((error) => {
       setIsLoading(false)
       if (error.response !== undefined) {
-        if (error.response.status > 400) {
+        if (error.response.status === 401 || error.response.status === 403) {
           window.localStorage.removeItem('AUTH')
           window.location.reload()
         }
@@ -77,7 +77,7 @@ export const deleteService = (id, handleErrors, handleSuccess, setIsLoading) => 
     .catch((error) => {
       setIsLoading(false)
       if (error.response !== undefined) {
-        if (error.response.status > 400) {
+        if (error.response.status === 401 || error.response.status === 403) {
           window.localStorage.removeItem('AUTH')
           window.location.reload()
         }
