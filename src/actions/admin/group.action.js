@@ -13,6 +13,10 @@ export const fetchAllgroups = () => (dispatch) => {
     .catch((error) => {
       console.log(error)
       if (error.response !== undefined) {
+        if (error.response.status > 400) {
+          window.localStorage.removeItem('AUTH')
+          window.location.reload()
+        }
       }
     })
 }
@@ -28,6 +32,10 @@ export const saveWorkgroup = (data, handleErrors, handleSuccess, setIsLoading) =
     .catch((error) => {
       setIsLoading(false)
       if (error.response !== undefined) {
+        if (error.response.status > 400) {
+          window.localStorage.removeItem('AUTH')
+          window.location.reload()
+        }
         handleErrors(error.response.data)
       }
     })
@@ -45,6 +53,10 @@ export const editWorkgroup =
       .catch((error) => {
         setIsLoading(false)
         if (error.response !== undefined) {
+          if (error.response.status > 400) {
+            window.localStorage.removeItem('AUTH')
+            window.location.reload()
+          }
           handleErrors(error.response.data)
         }
       })
@@ -61,6 +73,10 @@ export const deleteWorkgroup = (id, handleErrors, handleSuccess, setIsLoading) =
     .catch((error) => {
       setIsLoading(false)
       if (error.response !== undefined) {
+        if (error.response.status > 400) {
+          window.localStorage.removeItem('AUTH')
+          window.location.reload()
+        }
         handleErrors(error.response.data)
       }
     })
@@ -78,6 +94,10 @@ export const viewWorkgroupUsers =
       .catch((error) => {
         setIsUsersLoading(false)
         if (error.response !== undefined) {
+          if (error.response.status > 400) {
+            window.localStorage.removeItem('AUTH')
+            window.location.reload()
+          }
           handleErrors(error.response.data)
         }
       })
@@ -95,6 +115,10 @@ export const connectGroupToGmail =
       .catch((error) => {
         setIsLoading(false)
         if (error.response !== undefined) {
+          if (error.response.status > 400) {
+            window.localStorage.removeItem('AUTH')
+            window.location.reload()
+          }
           handleErrors(error.response.data)
         }
       })
@@ -112,6 +136,10 @@ export const disconnectGroupToGmail =
       .catch((error) => {
         setIsLoading(false)
         if (error.response !== undefined) {
+          if (error.response.status > 400) {
+            window.localStorage.removeItem('AUTH')
+            window.location.reload()
+          }
           handleErrors(error.response.data)
         }
       })
