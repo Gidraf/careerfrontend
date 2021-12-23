@@ -47,6 +47,7 @@ import {
   deleteWorkgroup,
   viewWorkgroupUsers,
   connectGroupToGmail,
+  disconnectGroupToGmail,
 } from '../../actions/admin/group.action'
 
 const Workgroups = () => {
@@ -98,6 +99,13 @@ const Workgroups = () => {
         setCollapsibleVisible,
       ),
     )
+  }
+
+  const disconnectGmail = (response) => {
+    const confirm = window.confirm('Are you sure you want to Disconnect this Workgroup')
+    if (confirm) {
+      dispatch(disconnectGroupToGmail(id, handleErrors, handleSuccess, setCollapsibleVisible))
+    }
   }
 
   const setCollapsibleVisible = (item) => {
@@ -355,7 +363,7 @@ const Workgroups = () => {
                         cookiePolicy={'single_host_origin'}
                       />
                     ) : (
-                      <CButton>Disconnect</CButton>
+                      <CButton onClick={disconnectGmail}>Disconnect</CButton>
                     )}
                   </CCardBody>
                 </CCard>

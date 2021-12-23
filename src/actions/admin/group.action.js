@@ -99,3 +99,20 @@ export const connectGroupToGmail =
         }
       })
   }
+
+export const disconnectGroupToGmail =
+  (id, handleErrors, handleSuccess, setIsLoading) => (dispatch) => {
+    setIsLoading(true)
+    axios
+      .delete(`${BASE_URL}api/v1/teams/gmail/${id}`)
+      .then((response) => {
+        setIsLoading(false)
+        handleSuccess(response.data)
+      })
+      .catch((error) => {
+        setIsLoading(false)
+        if (error.response !== undefined) {
+          handleErrors(error.response.data)
+        }
+      })
+  }
