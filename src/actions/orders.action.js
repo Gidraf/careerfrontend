@@ -17,7 +17,7 @@ export const fetchAllOrders = (start_date, end_date, status) => (dispatch) => {
     .catch((error) => {
       console.log(error)
       if (error.response !== undefined) {
-        if (error.response.status > 400) {
+        if (error.response.status === 401 || error.response.status === 403) {
           window.localStorage.removeItem('AUTH')
           window.location.reload()
         }

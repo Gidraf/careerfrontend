@@ -18,7 +18,7 @@ export const fetchAllRoles = () => (dispatch) => {
     .catch((error) => {
       console.log(error)
       if (error.response !== undefined) {
-        if (error.response.status > 400) {
+        if (error.response.status === 401 || error.response.status === 403) {
           window.localStorage.removeItem('AUTH')
           window.location.reload()
         }
@@ -37,7 +37,7 @@ export const saveRole = (data, handleErrors, handleSuccess, setIsLoading) => (di
     .catch((error) => {
       setIsLoading(false)
       if (error.response !== undefined) {
-        if (error.response.status > 400) {
+        if (error.response.status === 401 || error.response.status === 403) {
           window.localStorage.removeItem('AUTH')
           window.location.reload()
         }
@@ -57,7 +57,7 @@ export const editRole = (id, data, handleErrors, handleSuccess, setIsLoading) =>
     .catch((error) => {
       setIsLoading(false)
       if (error.response !== undefined) {
-        if (error.response.status > 400) {
+        if (error.response.status === 401 || error.response.status === 403) {
           window.localStorage.removeItem('AUTH')
           window.location.reload()
         }
@@ -77,7 +77,7 @@ export const deleteRole = (id, handleErrors, handleSuccess, setIsLoading) => (di
     .catch((error) => {
       setIsLoading(false)
       if (error.response !== undefined) {
-        if (error.response.status > 400) {
+        if (error.response.status === 401 || error.response.status === 403) {
           window.localStorage.removeItem('AUTH')
           window.location.reload()
         }
@@ -102,7 +102,7 @@ export const viewRolePermissions =
       .catch((error) => {
         setIsPermissionLoading(false)
         if (error.response !== undefined) {
-          if (error.response.status > 400) {
+          if (error.response.status === 401 || error.response.status === 403) {
             window.localStorage.removeItem('AUTH')
             window.location.reload()
           }
@@ -122,7 +122,7 @@ export const viewRoleUsers = (id, handleErrors, handleSuccess, setIsUsersLoading
     .catch((error) => {
       setIsUsersLoading(false)
       if (error.response !== undefined) {
-        if (error.response.status > 400) {
+        if (error.response.status === 401 || error.response.status === 403) {
           window.localStorage.removeItem('AUTH')
           window.location.reload()
         }
@@ -147,7 +147,7 @@ export const viewAllPermissions =
       .catch((error) => {
         // setIsUsersLoading(false)
         if (error.response !== undefined) {
-          if (error.response.status > 400) {
+          if (error.response.status === 401 || error.response.status === 403) {
             window.localStorage.removeItem('AUTH')
             window.location.reload()
           }
@@ -168,7 +168,7 @@ export const addRolePermissions =
       .catch((error) => {
         setIsAddingPermissionLoading(false)
         if (error.response !== undefined) {
-          if (error.response.status > 400) {
+          if (error.response.status === 401 || error.response.status === 403) {
             window.localStorage.removeItem('AUTH')
             window.location.reload()
           }

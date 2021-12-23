@@ -41,7 +41,7 @@ export const fetchAllRequests =
       .catch((error) => {
         console.log(error)
         if (error.response !== undefined) {
-          if (error.response.status > 400) {
+          if (error.response.status === 401 || error.response.status === 403) {
             window.localStorage.removeItem('AUTH')
             window.location.reload()
           }
@@ -65,7 +65,7 @@ export const fetchRequestsData =
         setIsLoading(false)
         console.log(error)
         if (error.response !== undefined) {
-          if (error.response.status > 400) {
+          if (error.response.status === 401 || error.response.status === 403) {
             window.localStorage.removeItem('AUTH')
             window.location.reload()
           }
@@ -87,7 +87,7 @@ export const generateClientReceipt =
         setIsLoading(false)
         console.log(error)
         if (error.response !== undefined) {
-          if (error.response.status > 400) {
+          if (error.response.status === 401 || error.response.status === 403) {
             window.localStorage.removeItem('AUTH')
             window.location.reload()
           }
@@ -109,7 +109,7 @@ export const assignJobToWorkgroup =
         setIsLoading(false)
         console.log(error)
         if (error.response !== undefined) {
-          if (error.response.status > 400) {
+          if (error.response.status === 401 || error.response.status === 403) {
             window.localStorage.removeItem('AUTH')
             window.location.reload()
           }

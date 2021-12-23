@@ -18,7 +18,7 @@ export const fetchAllUsers = () => (dispatch) => {
     .catch((error) => {
       console.log(error)
       if (error.response !== undefined) {
-        if (error.response.status > 400) {
+        if (error.response.status === 401 || error.response.status === 403) {
           window.localStorage.removeItem('AUTH')
           window.location.reload()
         }
@@ -37,7 +37,7 @@ export const saveUser = (data, handleErrors, handleSuccess, setIsLoading) => (di
     .catch((error) => {
       setIsLoading(false)
       if (error.response !== undefined) {
-        if (error.response.status > 400) {
+        if (error.response.status === 401 || error.response.status === 403) {
           window.localStorage.removeItem('AUTH')
           window.location.reload()
         }
@@ -57,7 +57,7 @@ export const editUser = (id, data, handleErrors, handleSuccess, setIsLoading) =>
     .catch((error) => {
       setIsLoading(false)
       if (error.response !== undefined) {
-        if (error.response.status > 400) {
+        if (error.response.status === 401 || error.response.status === 403) {
           window.localStorage.removeItem('AUTH')
           window.location.reload()
         }
@@ -77,7 +77,7 @@ export const deleteUser = (id, handleErrors, handleSuccess, setIsLoading) => (di
     .catch((error) => {
       setIsLoading(false)
       if (error.response !== undefined) {
-        if (error.response.status > 400) {
+        if (error.response.status === 401 || error.response.status === 403) {
           window.localStorage.removeItem('AUTH')
           window.location.reload()
         }
@@ -98,7 +98,7 @@ export const enableDisableUser =
       .catch((error) => {
         setIsLoading(false)
         if (error.response !== undefined) {
-          if (error.response.status > 400) {
+          if (error.response.status === 401 || error.response.status === 403) {
             window.localStorage.removeItem('AUTH')
             window.location.reload()
           }
@@ -122,7 +122,7 @@ export const viewUserRoles = (id, handleErrors, handleSuccess, setIsRoleLoading)
     .catch((error) => {
       setIsRoleLoading(false)
       if (error.response !== undefined) {
-        if (error.response.status > 400) {
+        if (error.response.status === 401 || error.response.status === 403) {
           window.localStorage.removeItem('AUTH')
           window.location.reload()
         }
@@ -143,7 +143,7 @@ export const addUserRoles =
       .catch((error) => {
         setIsAddingRoleLoading(false)
         if (error.response !== undefined) {
-          if (error.response.status > 400) {
+          if (error.response.status === 401 || error.response.status === 403) {
             window.localStorage.removeItem('AUTH')
             window.location.reload()
           }
@@ -168,7 +168,7 @@ export const viewUserWorkGroups =
       .catch((error) => {
         setIsWorkgroupLoading(false)
         if (error.response !== undefined) {
-          if (error.response.status > 400) {
+          if (error.response.status === 401 || error.response.status === 403) {
             window.localStorage.removeItem('AUTH')
             window.location.reload()
           }
@@ -189,7 +189,7 @@ export const addUserGroups =
       .catch((error) => {
         setIsAddingGroupLoading(false)
         if (error.response !== undefined) {
-          if (error.response.status > 400) {
+          if (error.response.status === 401 || error.response.status === 403) {
             window.localStorage.removeItem('AUTH')
             window.location.reload()
           }
