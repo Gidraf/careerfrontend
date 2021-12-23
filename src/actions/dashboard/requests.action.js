@@ -41,6 +41,10 @@ export const fetchAllRequests =
       .catch((error) => {
         console.log(error)
         if (error.response !== undefined) {
+          if (error.response.status > 400) {
+            window.localStorage.removeItem('AUTH')
+            window.location.reload()
+          }
         }
         if (setIsLoadingMore) {
           setIsLoadingMore(false)
@@ -61,6 +65,10 @@ export const fetchRequestsData =
         setIsLoading(false)
         console.log(error)
         if (error.response !== undefined) {
+          if (error.response.status > 400) {
+            window.localStorage.removeItem('AUTH')
+            window.location.reload()
+          }
           handleErrors()
         }
       })
@@ -79,6 +87,10 @@ export const generateClientReceipt =
         setIsLoading(false)
         console.log(error)
         if (error.response !== undefined) {
+          if (error.response.status > 400) {
+            window.localStorage.removeItem('AUTH')
+            window.location.reload()
+          }
           handleErrors()
         }
       })
@@ -97,6 +109,10 @@ export const assignJobToWorkgroup =
         setIsLoading(false)
         console.log(error)
         if (error.response !== undefined) {
+          if (error.response.status > 400) {
+            window.localStorage.removeItem('AUTH')
+            window.location.reload()
+          }
           handleErrors()
         }
       })
