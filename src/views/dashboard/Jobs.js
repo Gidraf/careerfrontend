@@ -366,6 +366,7 @@ const Jobs = ({ startDate, endDate, pageSize, query, group_id }) => {
         </CTableBody>
         <div style={{ position: 'absolute', width: '70%', marginLeft: '5rem' }}>
           <CRow>
+            <CCol xl="4"></CCol>
             <CCol>
               {jobs.has_next &&
                 !collapsibleVisible &&

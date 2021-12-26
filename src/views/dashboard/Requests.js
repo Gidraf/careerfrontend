@@ -349,6 +349,7 @@ const Requests = ({ startDate, endDate, pageSize, query }) => {
         </CTableBody>
         <div style={{ position: 'absolute', width: '70%', marginLeft: '5rem' }}>
           <CRow>
+            <CCol xl="4"></CCol>
             <CCol>
               {requests.has_next &&
                 !collapsibleVisible &&
