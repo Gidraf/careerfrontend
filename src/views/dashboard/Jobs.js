@@ -375,7 +375,7 @@ const Jobs = ({ startDate, endDate, pageSize, query, group_id }) => {
                       dispatch(
                         fetchAllJobsMore(
                           query,
-                          1,
+                          jobs.next_num,
                           pageSize,
                           startDate,
                           endDate,

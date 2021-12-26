@@ -358,7 +358,7 @@ const Requests = ({ startDate, endDate, pageSize, query }) => {
                       dispatch(
                         fetchAllRequestsMore(
                           query,
-                          1,
+                          requests.next_num,
                           pageSize,
                           startDate,
                           endDate,
