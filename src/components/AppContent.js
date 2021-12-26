@@ -107,7 +107,7 @@ const AppContent = () => {
                                   setgroupId('')
                                 }}
                                 size="md"
-                                placeholder="Search"
+                                placeholder="Search Job Id"
                               />
                             </CInputGroup>
                           </CCol>
