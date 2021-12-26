@@ -841,7 +841,7 @@ const renderJobs = (
         }}
       >
         {item.status === 'Final Draft Sent' && <CBadge color="success">{'Completed'}</CBadge>}
-        <div>{moment(item.created_at).format('MMMM Do YYYY, h:mm:ss a')}</div>
+        <div>{moment(item.created_at).format('MMM Do YYYY, h:mm:ss a')}</div>
         <strong>Due Date:</strong> <small>{moment(item.due_date).fromNow()}</small>
       </CTableDataCell>
 

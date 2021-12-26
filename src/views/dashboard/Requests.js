@@ -935,7 +935,7 @@ const renderequests = (
         ) : (
           <CBadge color="danger">{'Deactivated'}</CBadge>
         )} */}
-        <div>{moment(item.created_at).format('MMMM Do YYYY, h:mm:ss a')}</div>
+        <div>{moment(item.created_at).format('MMM Do YYYY, h:mm:ss a')}</div>
         <strong>{moment(item.created_at).fromNow()}</strong>
       </CTableDataCell>
 
