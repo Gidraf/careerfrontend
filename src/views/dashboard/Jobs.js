@@ -54,15 +54,18 @@ import {
   assignJobToUser,
   fetchJobsData,
   sendDraftEmail,
+  fetchAllJobsMore,
 } from '../../actions/dashboard/jobs.action'
 import { INITIAL_DRAFT_MESSAGE, FINAL_DRAFT_MESSAGE } from './../../assets/constants'
 import { fetchAllUsers } from '../../actions/admin/user.action'
 // import { fetchRequestsData } from '../../actions/dashboard/requests.action'
-
+import { fetchAllgroups } from '../../actions/admin/group.action'
 import { viewWorkgroupUsers } from '../../actions/admin/group.action'
 import '../../scss/jobs.scss'
+import PropTypes from 'prop-types'
+import moment from 'moment'
 
-const Jobs = () => {
+const Jobs = ({ startDate, endDate, pageSize, query, group_id }) => {
   const dispatch = useDispatch()
   const [errors, setErrors] = useState({})
   const [isLoading, setIsLoading] = useState(false)
@@ -106,6 +109,8 @@ const Jobs = () => {
   const [messageType, setMessageType] = useState('')
   const [isSending, setIsSending] = useState(false)
   const [sendindErrors, setSendingErrors] = useState({})
+  const [isLoadingMore, setIsLoadingMore] = useState(false)
+  const [isFetchingJobs, setisFetchingJobs] = useState(false)
 
   let currentUser = null
   const user = localStorage.getItem('AUTH')
@@ -115,10 +120,10 @@ const Jobs = () => {
   }
 
   useEffect(() => {
-    dispatch(fetchAllJobs())
+    dispatch(fetchAllJobs(query, 1, pageSize, startDate, endDate, group_id, setisFetchingJobs))
     // dispatch(fetchAllServices())
-    // dispatch(fetchAllgroups())
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+    dispatch(fetchAllgroups())
+  }, [startDate, endDate, pageSize, query, group_id]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleErrors = (errors) => {
     if (errors && errors.errors) {
@@ -331,11 +336,12 @@ const Jobs = () => {
             <CTableHeaderCell className="text-center">Group Assigned</CTableHeaderCell>
             <CTableHeaderCell className="text-center">Status</CTableHeaderCell>
             {/* <CTableHeaderCell className="text-center">Request Type</CTableHeaderCell> */}
-            <CTableHeaderCell>Progress Status</CTableHeaderCell>
+            <CTableHeaderCell>Date Created</CTableHeaderCell>
             <CTableHeaderCell>Actions</CTableHeaderCell>
           </CTableRow>
         </CTableHead>
         <CTableBody>
+          {isFetchingJobs && <CSpinner size="sm" />}
           {jobs.result &&
             renderJobs(
               jobs.result,
@@ -358,6 +364,36 @@ const Jobs = () => {
               //   GroupErrorToast,
             )}
         </CTableBody>
+        <div style={{ position: 'absolute', width: '70%', marginLeft: '5rem' }}>
+          <CRow>
+            <CCol>
+              {jobs.has_next &&
+                !collapsibleVisible &&
+                (!isLoadingMore ? (
+                  <CButton
+                    onClick={() => {
+                      dispatch(
+                        fetchAllJobsMore(
+                          query,
+                          1,
+                          pageSize,
+                          startDate,
+                          endDate,
+                          group_id,
+                          setIsLoadingMore,
+                        ),
+                      )
+                    }}
+                    size="sm"
+                  >
+                    Load More
+                  </CButton>
+                ) : (
+                  <CSpinner size="sm" style={{ marginTop: '.5rem' }} />
+                ))}
+            </CCol>
+          </CRow>
+        </div>
       </CTable>
       <CCollapse visible={collapsibleVisible}>
         <CContainer className="overflow-auto">
@@ -641,7 +677,14 @@ const Jobs = () => {
     </>
   )
 }
-
+Jobs.propTypes = {
+  startDate: PropTypes.string.isRequired,
+  endDate: PropTypes.string.isRequired,
+  pageSize: PropTypes.number.isRequired,
+  query: PropTypes.string.isRequired,
+  setquery: PropTypes.func.isRequired,
+  group_id: PropTypes.string.isRequired,
+}
 const renderJobs = (
   jobs,
   selectJob,
@@ -749,6 +792,8 @@ const renderJobs = (
         }}
       >
         <strong>{item.group ? item.group.name : 'Not Yet'}</strong>
+        <br />
+        <small>Last Update: {moment(item.updated_at).fromNow()}</small>
       </CTableDataCell>
       <CTableDataCell
         className="text-center"
@@ -766,6 +811,9 @@ const renderJobs = (
           setCollapsibleVisible(item)
         }}
       >
+        {moment(item.due_date) < moment(new Date()) && !item.status && (
+          <CBadge color="warning">{'Start this Job!'}</CBadge>
+        )}
         <div>{item.status}</div>
       </CTableDataCell>
       {/* <CTableDataCell
@@ -791,13 +839,9 @@ const renderJobs = (
           setCollapsibleVisible(item)
         }}
       >
-        {/* {item.status ? (
-          <CBadge color="success">{'Active'}</CBadge>
-        ) : (
-          <CBadge color="danger">{'Deactivated'}</CBadge>
-        )} */}
-        <CProgress thin className="mt-2" precision={1} color="info" value={40} />
-        {/* <strong>10 sec ago</strong> */}
+        {item.status === 'Final Draft Sent' && <CBadge color="success">{'Completed'}</CBadge>}
+        <div>{moment(item.created_at).format('MMMM Do YYYY, h:mm:ss a')}</div>
+        <strong>Due Date:</strong> <small>{moment(item.due_date).fromNow()}</small>
       </CTableDataCell>
 
       <CTableDataCell className="text-center">

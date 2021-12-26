@@ -1,5 +1,6 @@
 import React from 'react'
 import { AppContent, AppSidebar, AppFooter, AppHeader } from '../components/index'
+import CIcon from '@coreui/icons-react'
 
 const DefaultLayout = () => {
   return (

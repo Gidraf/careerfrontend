@@ -54,18 +54,21 @@ import {
   fetchRequestsData,
   generateClientReceipt,
   assignJobToWorkgroup,
-  clearRequests,
+  fetchAllRequestsMore,
 } from '../../actions/dashboard/requests.action'
 import { fetchAllServices } from '../../actions/admin/service.action'
 import { fetchAllgroups } from '../../actions/admin/group.action'
+import PropTypes from 'prop-types'
+import moment from 'moment'
 // import { fetchAllRoles } from '../../actions/admin/role.action'
 
 // import { fetchAllgroups } from '../../actions/admin/group.action'
 
-const Requests = () => {
+const Requests = ({ startDate, endDate, pageSize, query }) => {
   const dispatch = useDispatch()
   const [errors, setErrors] = useState({})
   const [isLoading, setIsLoading] = useState(false)
+  const [isFetchingRequest, setisFetchingRequest] = useState(false)
   const [visible, setVisible] = useState(false)
   const [id, setId] = useState(null)
   const [isSuccess, setisSucess] = useState(false)
@@ -76,7 +79,6 @@ const Requests = () => {
   const services = useSelector((state) => state.serviceReducer)
   const workgroups = useSelector((state) => state.groupReducer)
   const reduceRoles = useSelector((state) => state.userRole)
-
   const reduceGroups = useSelector((state) => state.userGroup)
   const [isWorkgroupLoading, setIsWorkgroupLoading] = useState(false)
   const [isLoadingMore, setIsLoadingMore] = useState(false)
@@ -99,15 +101,13 @@ const Requests = () => {
   const [additionalComments, setadditionalComments] = useState('')
   const [dueDate, setDueDate] = useState('')
   const [totalAmount, setTotal] = useState(0)
-  const [query, setquery] = useState('')
   const [queryType, setqueryType] = useState('id')
-  const [pageSize, setPageSize] = useState(20)
 
   useEffect(() => {
-    dispatch(fetchAllRequests(query, queryType, 1, pageSize))
+    dispatch(fetchAllRequests(query, 1, pageSize, startDate, endDate, setisFetchingRequest))
     dispatch(fetchAllServices())
     dispatch(fetchAllgroups())
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [startDate, endDate, pageSize, query]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleErrors = (errors) => {
     if (errors && errors.errors) {
@@ -320,14 +320,13 @@ const Requests = () => {
             <CTableHeaderCell className="text-center">Client Name</CTableHeaderCell>
             <CTableHeaderCell className="text-center">Client Email</CTableHeaderCell>
             <CTableHeaderCell className="text-center">Email Subject</CTableHeaderCell>
-            <CTableHeaderCell className="text-center">Group Assigned</CTableHeaderCell>
-            <CTableHeaderCell className="text-center">Status</CTableHeaderCell>
             {/* <CTableHeaderCell className="text-center">Request Type</CTableHeaderCell> */}
-            <CTableHeaderCell>Progress Status</CTableHeaderCell>
+            <CTableHeaderCell>Date Created</CTableHeaderCell>
             <CTableHeaderCell>Actions</CTableHeaderCell>
           </CTableRow>
         </CTableHead>
         <CTableBody>
+          {isFetchingRequest && <CSpinner size="sm" />}
           {requests.result &&
             renderequests(
               requests.result,
@@ -350,46 +349,6 @@ const Requests = () => {
         </CTableBody>
         <div style={{ position: 'absolute', width: '70%', marginLeft: '5rem' }}>
           <CRow>
-            <CCol sm="auto">
-              <strong>Search By:</strong>
-            </CCol>
-            <CCol>
-              <div className="mb-3">
-                <CFormSelect
-                  onChange={(e) => {
-                    setqueryType(e.target.value)
-                  }}
-                >
-                  <option value="id">Id</option>
-                  <option value="email">email</option>
-                </CFormSelect>
-              </div>
-            </CCol>
-            <CCol sm="auto">
-              <CFormControl
-                type={queryType === 'id' ? 'number' : 'email'}
-                onChange={(e) => {
-                  if (e.target.value) {
-                    setquery(e.target.value)
-                    return
-                  }
-                  // dispatch(clearRequests())
-                  dispatch(fetchAllRequests(query, queryType, 1, 20))
-                }}
-                placeholder="Search"
-              />
-            </CCol>
-            <CCol sm="auto">
-              <CButton
-                onClick={() => {
-                  dispatch(clearRequests())
-                  dispatch(fetchAllRequests(query, queryType, 1, pageSize, setIsLoadingMore))
-                }}
-                size="sm"
-              >
-                Search
-              </CButton>
-            </CCol>
             <CCol>
               {requests.has_next &&
                 !collapsibleVisible &&
@@ -397,11 +356,12 @@ const Requests = () => {
                   <CButton
                     onClick={() => {
                       dispatch(
-                        fetchAllRequests(
+                        fetchAllRequestsMore(
                           query,
-                          queryType,
-                          requests.next_num,
+                          1,
                           pageSize,
+                          startDate,
+                          endDate,
                           setIsLoadingMore,
                         ),
                       )
@@ -828,7 +788,13 @@ const Requests = () => {
     </>
   )
 }
-
+Requests.propTypes = {
+  startDate: PropTypes.string.isRequired,
+  endDate: PropTypes.string.isRequired,
+  pageSize: PropTypes.number.isRequired,
+  query: PropTypes.string.isRequired,
+  setquery: PropTypes.func.isRequired,
+}
 const renderequests = (
   requests,
   selectRequest,
@@ -904,7 +870,7 @@ const renderequests = (
         <strong>{item.email_subject}</strong>
         {/* <div className="small text-medium-emphasis">{item.customer_ordered.registered_on}</div> */}
       </CTableDataCell>
-      <CTableDataCell
+      {/* <CTableDataCell
         className="text-center"
         onClick={() => {
           // if (!isRoleLoading && !isWorkgroupLoading)
@@ -921,8 +887,8 @@ const renderequests = (
         }}
       >
         <strong>{item.group ? item.group.name : 'Not Yet'}</strong>
-      </CTableDataCell>
-      <CTableDataCell
+      </CTableDataCell> */}
+      {/* <CTableDataCell
         className="text-center"
         onClick={() => {
           //   if (!isRoleLoading && !isWorkgroupLoading)
@@ -939,7 +905,7 @@ const renderequests = (
         }}
       >
         <div>{item.status}</div>
-      </CTableDataCell>
+      </CTableDataCell> */}
       {/* <CTableDataCell
         className="text-center"
         onClick={() => {
@@ -968,8 +934,8 @@ const renderequests = (
         ) : (
           <CBadge color="danger">{'Deactivated'}</CBadge>
         )} */}
-        <CProgress thin className="mt-2" precision={1} color="info" value={40} />
-        {/* <strong>10 sec ago</strong> */}
+        <div>{moment(item.created_at).format('MMMM Do YYYY, h:mm:ss a')}</div>
+        <strong>{moment(item.created_at).fromNow()}</strong>
       </CTableDataCell>
 
       <CTableDataCell className="text-center">

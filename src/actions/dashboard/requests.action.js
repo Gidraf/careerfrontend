@@ -1,30 +1,20 @@
 import axios from 'axios'
+import moment from 'moment'
 import {
   BASE_URL,
   FETCH_ALL_REQUEST,
   FETCH_USER_ROLES,
   FETCH_USER_WORKGROUPS,
   CLEAR_ALL_REQUEST,
+  FETCH_ALL_REQUEST_MORE,
 } from '../../assets/constants'
 
-export const clearRequests = () => (dispatch) => {
-  dispatch({
-    type: CLEAR_ALL_REQUEST,
-    payload: [],
-    next_num: 1,
-    has_next: false,
-  })
-}
-
 export const fetchAllRequests =
-  (query, quey_type, page, page_size, setIsLoadingMore) => (dispatch) => {
-    if (setIsLoadingMore) {
-      setIsLoadingMore(true)
-    }
-    let url = `${BASE_URL}api/v1/requests?page=${page}&page_size=20`
-    if (query && quey_type) {
-      url = `${url}&query=${query}&query_type=${quey_type}`
-    }
+  (query, page, page_size, startDate, endDate, setIsFetchingRequest) => (dispatch) => {
+    setIsFetchingRequest(true)
+    let url = `${BASE_URL}api/v1/requests?page=${page}&page_size=${page_size}&query=${query}&start_date=${moment(
+      startDate,
+    ).format('MM-DD-YYYY h:mm:ss')}&end_date=${moment(endDate).format('MM-DD-YYYY h:mm:ss')}`
     axios
       .get(url)
       .then((response) => {
@@ -34,8 +24,38 @@ export const fetchAllRequests =
           next_num: response.data.next_num,
           has_next: response.data.has_next,
         })
+        setIsFetchingRequest(false)
+      })
+      .catch((error) => {
+        console.log(error)
+        if (error.response !== undefined) {
+          if (error.response.status === 401 || error.response.status === 403) {
+            window.localStorage.removeItem('AUTH')
+            window.location.reload()
+          }
+        }
+        setIsFetchingRequest(false)
+      })
+  }
+
+export const fetchAllRequestsMore =
+  (query, page, page_size, startDate, endDate, setIsLoadingMore) => (dispatch) => {
+    setIsLoadingMore(true)
+
+    let url = `${BASE_URL}api/v1/requests?page=${page}&page_size=${page_size}&query=${query}&start_date=${moment(
+      startDate,
+    ).format('MM-DD-YYYY h:mm:ss')}&end_date=${moment(endDate).format('MM-DD-YYYY h:mm:ss')}`
+    axios
+      .get(url)
+      .then((response) => {
         if (setIsLoadingMore) {
-          setIsLoadingMore(false)
+          dispatch({
+            type: FETCH_ALL_REQUEST_MORE,
+            payload: response.data.result,
+            next_num: response.data.next_num,
+            has_next: response.data.has_next,
+          })
+          setIsLoadingMore(true)
         }
       })
       .catch((error) => {
@@ -46,9 +66,7 @@ export const fetchAllRequests =
             window.location.reload()
           }
         }
-        if (setIsLoadingMore) {
-          setIsLoadingMore(false)
-        }
+        setIsLoadingMore(false)
       })
   }
 

@@ -20,7 +20,9 @@ export const FETCH_USER_WORKGROUPS = 'FETCH_USER_WORKGROUP'
 export const FETCH_ROLE_PERMISSIONS = 'FETCH_ROLE_PERMISSIONS'
 export const FETCH_ALL_REQUEST = 'FETCH_ALL_REQUEST'
 export const FETCH_ALL_JOBS = 'FETCH_ALL_JOBS'
+export const FETCH_ALL_JOBS_MORE = 'FETCH_ALL_JOBS_MORE'
 export const CLEAR_ALL_REQUEST = 'CLEAR_ALL_REQUEST'
+export const FETCH_ALL_REQUEST_MORE = 'FETCH_ALL_REQUEST_MORE'
 
 export const provideToken = () => {
   const user = localStorage.getItem('AUTH')

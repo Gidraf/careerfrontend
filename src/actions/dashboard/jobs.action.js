@@ -1,30 +1,74 @@
 import axios from 'axios'
+import moment from 'moment'
 import {
   BASE_URL,
   FETCH_ALL_JOBS,
   FETCH_USER_ROLES,
   FETCH_USER_WORKGROUPS,
+  FETCH_ALL_JOBS_MORE,
 } from '../../assets/constants'
 
-export const fetchAllJobs = () => (dispatch) => {
-  axios
-    .get(`${BASE_URL}api/v1/jobs`)
-    .then((response) => {
-      dispatch({
-        type: FETCH_ALL_JOBS,
-        payload: response.data,
+export const fetchAllJobs =
+  (query, page, page_size, startDate, endDate, group_id, setIsFetchingRequest) => (dispatch) => {
+    setIsFetchingRequest(true)
+    let url = `${BASE_URL}api/v1/jobs?page=${page}&page_size=${page_size}&query=${query}&start_date=${moment(
+      startDate,
+    ).format('MM-DD-YYYY h:mm:ss')}&end_date=${moment(endDate).format(
+      'MM-DD-YYYY h:mm:ss',
+    )}&group_id=${group_id ? group_id : null}`
+    axios
+      .get(url)
+      .then((response) => {
+        dispatch({
+          type: FETCH_ALL_JOBS,
+          payload: response.data.result,
+          next_num: response.data.next_num,
+          has_next: response.data.has_next,
+        })
+        setIsFetchingRequest(false)
       })
-    })
-    .catch((error) => {
-      console.log(error)
-      if (error.response !== undefined) {
-        if (error.response.status === 401 || error.response.status === 403) {
-          window.localStorage.removeItem('AUTH')
-          window.location.reload()
+      .catch((error) => {
+        setIsFetchingRequest(false)
+        console.log(error)
+        if (error.response !== undefined) {
+          if (error.response.status === 401 || error.response.status === 403) {
+            window.localStorage.removeItem('AUTH')
+            window.location.reload()
+          }
         }
-      }
-    })
-}
+      })
+  }
+
+export const fetchAllJobsMore =
+  (query, page, page_size, startDate, endDate, group_id, setIsLoadingMore) => (dispatch) => {
+    setIsLoadingMore(true)
+    let url = `${BASE_URL}api/v1/jobs?page=${page}&page_size=${page_size}&query=${query}&start_date=${moment(
+      startDate,
+    ).format('MM-DD-YYYY h:mm:ss')}&end_date=${moment(endDate).format(
+      'MM-DD-YYYY h:mm:ss',
+    )}&group_id=${group_id ? group_id : null}`
+    axios
+      .get(url)
+      .then((response) => {
+        dispatch({
+          type: FETCH_ALL_JOBS_MORE,
+          payload: response.data.result,
+          next_num: response.data.next_num,
+          has_next: response.data.has_next,
+        })
+        setIsLoadingMore(false)
+      })
+      .catch((error) => {
+        setIsLoadingMore(false)
+        console.log(error)
+        if (error.response !== undefined) {
+          if (error.response.status === 401 || error.response.status === 403) {
+            window.localStorage.removeItem('AUTH')
+            window.location.reload()
+          }
+        }
+      })
+  }
 
 export const fetchJobsData =
   (id, handleSuccess, handleErrors, isLoading, setIsLoading) => (dispatch) => {
