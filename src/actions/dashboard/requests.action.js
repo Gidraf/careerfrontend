@@ -55,7 +55,7 @@ export const fetchAllRequestsMore =
             next_num: response.data.next_num,
             has_next: response.data.has_next,
           })
-          setIsLoadingMore(true)
+          setIsLoadingMore(false)
         }
       })
       .catch((error) => {
