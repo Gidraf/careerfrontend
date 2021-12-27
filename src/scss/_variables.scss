@@ -17,6 +17,7 @@ $gray-700:  #8059c9 !default;
 $gray-800:  #6932cf !default;
 $gray-900:  #8a73b6 !default;
 $black:     #000 !default;
+$gold: #FFD700 !default;
 // scss-docs-end gray-color-variables
 
 // fusv-disable
@@ -95,10 +96,10 @@ $primary-25:    #ccc7f6 !default;
 // $info-50:    #80c6ff !default;
 // $info-25:    #c0e6ff !default;
 
-// $warning-dark:  #f6960b !default;
-// $warning-base:  #f9b115 !default;
-// $warning-50:    #fcd88a !default;
-// $warning-25:    #feecc5 !default;
+$warning-dark:  #f6960b !default;
+$warning-base:  #f9b115 !default;
+$warning-50:    #fcd88a !default;
+$warning-25:    #feecc5 !default;
 
 // $danger-dark:  #d93737 !default;
 // $danger-base:  #e55353 !default;

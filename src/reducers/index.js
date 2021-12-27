@@ -8,6 +8,7 @@ import { serviceReducer } from './admin/service.reducer'
 import { requestReducer } from './dashboard/requests.reducer'
 import { jobReducer } from './dashboard/jobs.reducer'
 import { bookingReducer } from './dashboard/bookings.reducer'
+import { goldReducer } from './dashboard/analytics.reducers'
 
 const allReducers = combineReducers({
   ordersReducer,
@@ -24,6 +25,7 @@ const allReducers = combineReducers({
   serviceReducer,
   jobReducer,
   bookingReducer,
+  goldReducer,
 })
 
 export default allReducers

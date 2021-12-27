@@ -161,6 +161,32 @@ const AppContent = () => {
                           </CCol>
                         </CRow>
                       )}
+                      {route.name === 'Analytics' && (
+                        <CRow>
+                          <CCol xl={5}>
+                            <h5 style={{ padding: '.5rem' }}>
+                              Services stats: {moment(startDate).format('MMM DD YYYY')}-
+                              {moment(endDate).format('MMM DD YYYY')}
+                            </h5>
+                          </CCol>
+                          <CCol xs={3} style={{ display: 'inline-flex', marginRight: '1.5rem' }}>
+                            <CFormText style={{ marginRight: '.5rem' }}>From:</CFormText>
+                            <DatePicker
+                              style
+                              selected={startDate}
+                              onChange={(date) => setStartDate(date)}
+                            />
+                          </CCol>
+                          <CCol xs={3} style={{ display: 'inline-flex', marginRight: '1rem' }}>
+                            <CFormText style={{ marginRight: '.5rem' }}>To:</CFormText>
+                            <DatePicker
+                              style
+                              selected={endDate}
+                              onChange={(date) => setEndDate(date)}
+                            />
+                          </CCol>
+                        </CRow>
+                      )}
                       <route.component
                         startDate={startDate}
                         endDate={endDate}
