@@ -50,7 +50,7 @@ const WidgetsDropdown = ({
               backgroundColor: colors[Math.floor(Math.random() * colors.length)],
             }}
             color="#fff"
-            value={goldAnalytics.result.length}
+            value={goldAnalytics.result[item].total}
             change={
               <>
                 <small>Total</small>
@@ -77,7 +77,7 @@ const WidgetsDropdown = ({
                   className="mt-3 mx-3"
                   style={{ height: '100px' }}
                   data={{
-                    labels: goldAnalytics.result[item].map((val, i) =>
+                    labels: goldAnalytics.result[item][item].map((val, i) =>
                       moment(val.title, 'DD-MM-YYYY').format('ll'),
                     ),
                     datasets: [
@@ -86,7 +86,7 @@ const WidgetsDropdown = ({
                         backgroundColor: 'transparent',
                         borderColor: 'rgb(255,215,255)',
                         pointBackgroundColor: getStyle('--cui-primary'),
-                        data: goldAnalytics.result[item].map((val, i) => val.value),
+                        data: goldAnalytics.result[item][item].map((val, i) => val.value),
                       },
                     ],
                   }}
@@ -108,8 +108,12 @@ const WidgetsDropdown = ({
                         },
                       },
                       y: {
-                        min: Math.min(...goldAnalytics.result[item].map((val, i) => val.value)),
-                        max: Math.max(...goldAnalytics.result[item].map((val, i) => val.value)),
+                        min: Math.min(
+                          ...goldAnalytics.result[item][item].map((val, i) => val.value),
+                        ),
+                        max: Math.max(
+                          ...goldAnalytics.result[item][item].map((val, i) => val.value),
+                        ),
                         display: false,
                         grid: {
                           display: false,
