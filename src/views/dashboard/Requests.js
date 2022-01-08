@@ -452,6 +452,7 @@ const Requests = ({ startDate, endDate, pageSize, query }) => {
                             >
                               <option value={orderPackage}>{orderPackage}</option>
                               <option value="Normal Services">Normal Services</option>
+                              <option value="platinum">Platinum</option>
                               <option value="gold">Gold</option>
                               <option value="silver">Silver</option>
                               <option value="bronze">Bronze</option>
