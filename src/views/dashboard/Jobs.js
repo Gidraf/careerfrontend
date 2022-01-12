@@ -111,6 +111,7 @@ const Jobs = ({ startDate, endDate, pageSize, query, group_id }) => {
   const [sendindErrors, setSendingErrors] = useState({})
   const [isLoadingMore, setIsLoadingMore] = useState(false)
   const [isFetchingJobs, setisFetchingJobs] = useState(false)
+  const [selectedThread, setSelectedThread] = useState('')
 
   let currentUser = null
   const user = localStorage.getItem('AUTH')
@@ -266,6 +267,17 @@ const Jobs = ({ startDate, endDate, pageSize, query, group_id }) => {
       <CToastBody>Please assign tasks to all the users</CToastBody>
     </CToast>
   )
+
+  function downloadBase64File(contentType, base64Data, fileName) {
+    const linkSource = `data:${contentType};base64,${base64Data
+      .replaceAll('-', '+')
+      .replaceAll('_', '/')}`
+    console.log(linkSource)
+    const downloadLink = document.createElement('a')
+    downloadLink.href = linkSource
+    downloadLink.download = fileName
+    downloadLink.click()
+  }
 
   const emailSendToast = (
     <CToast placement="top-end" title="" autohide={true}>
@@ -424,12 +436,38 @@ const Jobs = ({ startDate, endDate, pageSize, query, group_id }) => {
                             <small className="small text-medium-emphasis">{item.status}</small>
                           </CListGroupItem>
                         ))}
+                      <CCardTitle style={{ margin: '1rem' }}>Download Files</CCardTitle>
+                      {currentJob.order &&
+                        currentJob.files.map((d, i) => (
+                          <CListGroupItem
+                            style={{
+                              marginTop: '.5rem',
+                              cursor: 'pointer',
+                            }}
+                            onClick={() => {
+                              downloadBase64File(d.mimeType, d.data, d.filename)
+                            }}
+                            key={d.id}
+                          >
+                            {d.filename}
+                            <img
+                              src="https://res.cloudinary.com/duac6jsmx/image/upload/v1641998223/download_q75b6s.png"
+                              className="sidebar-brand-full"
+                              name="logo-negative"
+                              height={30}
+                              style={{ float: 'right', cursor: 'pointer' }}
+                              onClick={() => {
+                                downloadBase64File(d.mimeType, d.data, d.filename)
+                              }}
+                            />
+                          </CListGroupItem>
+                        ))}
                     </CListGroup>
                   </CCardBody>
                 </CCard>
               </CCallout>
             </CCol>
-            <CCol>
+            <CCol xl={4}>
               <CCallout color="primary" style={{ padding: 0 }}>
                 <CCard className="mt-1" style={{ marginTop: 0 }}>
                   <CCardHeader>
@@ -474,6 +512,65 @@ const Jobs = ({ startDate, endDate, pageSize, query, group_id }) => {
                             </CFormSelect>
                           </CListGroupItem>
                         ))}
+                      {actionState !== 'user' && (
+                        <>
+                          <CCardTitle>Admin Thread</CCardTitle>
+                          {currentJob.order &&
+                            currentJob.order.thread.threads.map((t, i) => (
+                              <>
+                                <CCallout
+                                  onClick={() =>
+                                    selectedThread !== t.id
+                                      ? setSelectedThread(t.id)
+                                      : setSelectedThread('')
+                                  }
+                                  key={t.id}
+                                  style={{ fontSize: '1rem', cursor: 'pointer' }}
+                                  color="warning"
+                                >
+                                  {t.snippet}
+                                  <br />
+                                  <a style={{ float: 'right' }}>
+                                    <small>Click to here read more</small>
+                                  </a>
+                                </CCallout>
+                                {selectedThread === t.id && (
+                                  <div
+                                    style={{
+                                      backgroundColor: '#42424214',
+                                      padding: '1rem',
+                                      borderRadius: '10px',
+                                      maxHeight: '20rem',
+                                      overflowX: 'scroll',
+                                    }}
+                                  >
+                                    {t.messages.map((m, i) => {
+                                      // let str = m.payload.parts[0].body.data
+                                      // let buff = new Buffer(str, 'base64')
+                                      // let base64ToStringNew = buff.toString('ascii')
+                                      // console.log(base64ToStringNew)
+                                      return (
+                                        <div
+                                          key={m.id}
+                                          style={{
+                                            backgroundColor: i % 2 === 0 ? '#4E342E' : '#FFAB00',
+                                            padding: '1rem',
+                                            color: i % 2 === 0 ? '#FFAB00' : '#4E342E',
+                                            margin: '.5rem',
+                                            borderRadius: '10px',
+                                          }}
+                                        >
+                                          <small key={m.id}>{m.snippet}</small>
+                                          <br />
+                                        </div>
+                                      )
+                                    })}
+                                  </div>
+                                )}
+                              </>
+                            ))}
+                        </>
+                      )}
                       <CListGroupItem>
                         {currentJob.order && currentJob.order.rate && (
                           <>
@@ -487,7 +584,7 @@ const Jobs = ({ startDate, endDate, pageSize, query, group_id }) => {
                 </CCard>
               </CCallout>
             </CCol>
-            <CCol>
+            <CCol xl={4}>
               <CCallout color="primary" style={{ padding: 0 }}>
                 <CCard className="mt-1" style={{ marginTop: 0 }}>
                   <CCardHeader>
