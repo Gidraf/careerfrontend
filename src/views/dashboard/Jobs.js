@@ -409,226 +409,231 @@ const Jobs = ({ startDate, endDate, pageSize, query, group_id }) => {
         </div>
       </CTable>
       <CCollapse visible={collapsibleVisible}>
-        <CContainer className="overflow-auto">
-          <CRow xs={{ gutterX: 0.5 }}>
-            <CCol>
-              <CCallout color="primary" style={{ padding: 0 }}>
-                <CCard className="mt-1">
-                  <CCardHeader>
-                    <CRow>
-                      <CCol className="col-9">
-                        <CCardTitle>Services Requested</CCardTitle>
-                      </CCol>
-                      <CCol className="col-3"></CCol>
-                    </CRow>
-                  </CCardHeader>
-                  <CCardBody>
-                    <CListGroup>
-                      {servicesSelcted &&
-                        servicesSelcted.map((item, i) => (
-                          <CListGroupItem key={i}>
-                            <strong>{item.name}</strong>
-                            {item.assigned_to && (
-                              <>
-                                <br /> <small>{item.assigned_to.name}</small>
-                              </>
-                            )}
-                            <small className="small text-medium-emphasis">{item.status}</small>
-                          </CListGroupItem>
-                        ))}
-                      <CCardTitle style={{ margin: '1rem' }}>Download Files</CCardTitle>
-                      {currentJob.order &&
-                        currentJob.files.map((d, i) => (
-                          <CListGroupItem
-                            style={{
-                              marginTop: '.5rem',
-                              cursor: 'pointer',
-                            }}
-                            onClick={() => {
-                              downloadBase64File(d.mimeType, d.data, d.filename)
-                            }}
-                            key={d.id}
-                          >
-                            {d.filename}
-                            <img
-                              src="https://res.cloudinary.com/duac6jsmx/image/upload/v1641998223/download_q75b6s.png"
-                              className="sidebar-brand-full"
-                              name="logo-negative"
-                              height={30}
-                              style={{ float: 'right', cursor: 'pointer' }}
-                              onClick={() => {
-                                downloadBase64File(d.mimeType, d.data, d.filename)
-                              }}
-                            />
-                          </CListGroupItem>
-                        ))}
-                    </CListGroup>
-                  </CCardBody>
-                </CCard>
-              </CCallout>
-            </CCol>
-            <CCol xl={4}>
-              <CCallout color="primary" style={{ padding: 0 }}>
-                <CCard className="mt-1" style={{ marginTop: 0 }}>
-                  <CCardHeader>
-                    <CRow>
-                      <CCol className="col-9">
-                        <CCardTitle>
-                          {actionState === 'user' ? 'Assign Users Tasks' : 'Other Details'}
-                        </CCardTitle>
-                      </CCol>
-                      <CCol className="col-3"></CCol>
-                    </CRow>
-                  </CCardHeader>
-                  <CCardBody>
-                    <CListGroup>
-                      {actionState === 'user' &&
-                        servicesSelcted.map((item, i) => (
-                          <CListGroupItem key={i}>
-                            <strong>{item.name}</strong>
-                            <br />
-                            <CFormLabel>Select User</CFormLabel>
-                            <CFormSelect
-                              onChange={(e) =>
-                                e.target.value &&
-                                setAssignedUsers({
-                                  ...assignedUsers,
-                                  [item.task_id]: e.target.value,
-                                })
-                              }
-                              aria-label="packages"
-                            >
-                              {item.assigned_to ? (
-                                <option value={item.assigned_to.id}>{item.assigned_to.name}</option>
-                              ) : (
-                                <option value={''}>Select User</option>
+        {!isLoading && (
+          <CContainer className="overflow-auto">
+            <CRow xs={{ gutterX: 0.5 }}>
+              <CCol>
+                <CCallout color="primary" style={{ padding: 0 }}>
+                  <CCard className="mt-1">
+                    <CCardHeader>
+                      <CRow>
+                        <CCol className="col-9">
+                          <CCardTitle>Services Requested</CCardTitle>
+                        </CCol>
+                        <CCol className="col-3"></CCol>
+                      </CRow>
+                    </CCardHeader>
+                    <CCardBody>
+                      <CListGroup>
+                        {servicesSelcted &&
+                          servicesSelcted.map((item, i) => (
+                            <CListGroupItem key={i}>
+                              <strong>{item.name}</strong>
+                              {item.assigned_to && (
+                                <>
+                                  <br /> <small>{item.assigned_to.name}</small>
+                                </>
                               )}
-                              {groupUsers.result &&
-                                groupUsers.result.map((val, i) => (
-                                  <option key={i} value={val.id}>
-                                    {val.username}
+                              <small className="small text-medium-emphasis">{item.status}</small>
+                            </CListGroupItem>
+                          ))}
+                        <CCardTitle style={{ margin: '1rem' }}>Download Files</CCardTitle>
+                        {currentJob.order &&
+                          currentJob.files.map((d, i) => (
+                            <CListGroupItem
+                              style={{
+                                marginTop: '.5rem',
+                                cursor: 'pointer',
+                              }}
+                              onClick={() => {
+                                // downloadBase64File(d.mimeType, d.data, d.filename)
+                              }}
+                              key={d.id}
+                            >
+                              {d.filename}
+                              <img
+                                src="https://res.cloudinary.com/duac6jsmx/image/upload/v1641998223/download_q75b6s.png"
+                                className="sidebar-brand-full"
+                                name="logo-negative"
+                                height={30}
+                                style={{ float: 'right', cursor: 'pointer' }}
+                                onClick={() => {
+                                  downloadBase64File(d.mimeType, d.data, d.filename)
+                                }}
+                              />
+                            </CListGroupItem>
+                          ))}
+                      </CListGroup>
+                    </CCardBody>
+                  </CCard>
+                </CCallout>
+              </CCol>
+              <CCol xl={4}>
+                <CCallout color="primary" style={{ padding: 0 }}>
+                  <CCard className="mt-1" style={{ marginTop: 0 }}>
+                    <CCardHeader>
+                      <CRow>
+                        <CCol className="col-9">
+                          <CCardTitle>
+                            {actionState === 'user' ? 'Assign Users Tasks' : 'Other Details'}
+                          </CCardTitle>
+                        </CCol>
+                        <CCol className="col-3"></CCol>
+                      </CRow>
+                    </CCardHeader>
+                    <CCardBody>
+                      <CListGroup>
+                        {actionState === 'user' &&
+                          servicesSelcted.map((item, i) => (
+                            <CListGroupItem key={i}>
+                              <strong>{item.name}</strong>
+                              <br />
+                              <CFormLabel>Select User</CFormLabel>
+                              <CFormSelect
+                                onChange={(e) =>
+                                  e.target.value &&
+                                  setAssignedUsers({
+                                    ...assignedUsers,
+                                    [item.task_id]: e.target.value,
+                                  })
+                                }
+                                aria-label="packages"
+                              >
+                                {item.assigned_to ? (
+                                  <option value={item.assigned_to.id}>
+                                    {item.assigned_to.name}
                                   </option>
-                                ))}
-                            </CFormSelect>
-                          </CListGroupItem>
-                        ))}
-                      {actionState !== 'user' && (
-                        <>
-                          <CCardTitle>Admin Thread</CCardTitle>
-                          {currentJob.order &&
-                            currentJob.order.thread.threads.map((t, i) => (
-                              <>
-                                <CCallout
-                                  onClick={() =>
-                                    selectedThread !== t.id
-                                      ? setSelectedThread(t.id)
-                                      : setSelectedThread('')
-                                  }
-                                  key={t.id}
-                                  style={{ fontSize: '1rem', cursor: 'pointer' }}
-                                  color="warning"
-                                >
-                                  {t.snippet}
-                                  <br />
-                                  <a style={{ float: 'right' }}>
-                                    <small>Click to here read more</small>
-                                  </a>
-                                </CCallout>
-                                {selectedThread === t.id && (
-                                  <div
-                                    style={{
-                                      backgroundColor: '#42424214',
-                                      padding: '1rem',
-                                      borderRadius: '10px',
-                                      maxHeight: '20rem',
-                                      overflowX: 'scroll',
-                                    }}
-                                  >
-                                    {t.messages.map((m, i) => {
-                                      // let str = m.payload.parts[0].body.data
-                                      // let buff = new Buffer(str, 'base64')
-                                      // let base64ToStringNew = buff.toString('ascii')
-                                      // console.log(base64ToStringNew)
-                                      return (
-                                        <div
-                                          key={m.id}
-                                          style={{
-                                            backgroundColor: i % 2 === 0 ? '#4E342E' : '#FFAB00',
-                                            padding: '1rem',
-                                            color: i % 2 === 0 ? '#FFAB00' : '#4E342E',
-                                            margin: '.5rem',
-                                            borderRadius: '10px',
-                                          }}
-                                        >
-                                          <small key={m.id}>{m.snippet}</small>
-                                          <br />
-                                        </div>
-                                      )
-                                    })}
-                                  </div>
+                                ) : (
+                                  <option value={''}>Select User</option>
                                 )}
-                              </>
-                            ))}
-                        </>
-                      )}
-                      <CListGroupItem>
-                        {currentJob.order && currentJob.order.rate && (
+                                {groupUsers.result &&
+                                  groupUsers.result.map((val, i) => (
+                                    <option key={i} value={val.id}>
+                                      {val.username}
+                                    </option>
+                                  ))}
+                              </CFormSelect>
+                            </CListGroupItem>
+                          ))}
+                        {actionState !== 'user' && (
                           <>
-                            <strong>Ratings: </strong> <strong>{currentJob.order.rate}</strong>
-                            <p className="text-muted">{currentJob.order.comments}</p>
+                            <CCardTitle>Admin Thread</CCardTitle>
+                            {currentJob.order &&
+                              currentJob.order.thread.threads.map((t, i) => (
+                                <>
+                                  <CCallout
+                                    onClick={() =>
+                                      selectedThread !== t.id
+                                        ? setSelectedThread(t.id)
+                                        : setSelectedThread('')
+                                    }
+                                    key={t.id}
+                                    style={{ fontSize: '1rem', cursor: 'pointer' }}
+                                    color="warning"
+                                  >
+                                    {t.snippet}
+                                    <br />
+                                    <a style={{ float: 'right' }}>
+                                      <small>Click to here read more</small>
+                                    </a>
+                                  </CCallout>
+                                  {selectedThread === t.id && (
+                                    <div
+                                      style={{
+                                        backgroundColor: '#42424214',
+                                        padding: '1rem',
+                                        borderRadius: '10px',
+                                        maxHeight: '20rem',
+                                        overflowX: 'scroll',
+                                      }}
+                                    >
+                                      {t.messages.map((m, i) => {
+                                        // let str = m.payload.parts[0].body.data
+                                        // let buff = new Buffer(str, 'base64')
+                                        // let base64ToStringNew = buff.toString('ascii')
+                                        // console.log(base64ToStringNew)
+                                        return (
+                                          <div
+                                            key={m.id}
+                                            style={{
+                                              backgroundColor: i % 2 === 0 ? '#4E342E' : '#FFAB00',
+                                              padding: '1rem',
+                                              color: i % 2 === 0 ? '#FFAB00' : '#4E342E',
+                                              margin: '.5rem',
+                                              borderRadius: '10px',
+                                            }}
+                                          >
+                                            <small key={m.id}>{m.snippet}</small>
+                                            <br />
+                                          </div>
+                                        )
+                                      })}
+                                    </div>
+                                  )}
+                                </>
+                              ))}
                           </>
                         )}
-                      </CListGroupItem>
-                    </CListGroup>
-                  </CCardBody>
-                </CCard>
-              </CCallout>
-            </CCol>
-            <CCol xl={4}>
-              <CCallout color="primary" style={{ padding: 0 }}>
-                <CCard className="mt-1" style={{ marginTop: 0 }}>
-                  <CCardHeader>
-                    <CCardTitle>
-                      Activities
-                      {/* {actionState === 'user' || actionState === 'receipt'
-                        ? 'Activities'
-                        : 'Group Assigned'} */}
-                    </CCardTitle>
-                  </CCardHeader>
-                  <CCardBody>
-                    {actionState === 'user' && (
-                      <CButton
-                        onClick={() => {
-                          console.log(assignedUsers)
-                          if (Object.entries(assignedUsers).length !== servicesSelcted.length) {
-                            addToast(selectUserErrorToast)
-                            return
-                          }
-                          setVisible(true)
-                        }}
-                        color="info"
-                        size="lg"
-                      >
-                        Assign Users
-                      </CButton>
-                    )}
-                    {actionState !== 'user' && currentJob.order && currentJob.order.status && (
-                      <CButton
-                        onClick={() => {
-                          setIsSendingDraf(true)
-                        }}
-                        color="info"
-                        size="lg"
-                      >
-                        Send a Draft
-                      </CButton>
-                    )}
-                  </CCardBody>
-                </CCard>
-              </CCallout>
-            </CCol>
-          </CRow>
-        </CContainer>
+                        <CListGroupItem>
+                          {currentJob.order && currentJob.order.rate && (
+                            <>
+                              <strong>Ratings: </strong> <strong>{currentJob.order.rate}</strong>
+                              <p className="text-muted">{currentJob.order.comments}</p>
+                            </>
+                          )}
+                        </CListGroupItem>
+                      </CListGroup>
+                    </CCardBody>
+                  </CCard>
+                </CCallout>
+              </CCol>
+              <CCol xl={4}>
+                <CCallout color="primary" style={{ padding: 0 }}>
+                  <CCard className="mt-1" style={{ marginTop: 0 }}>
+                    <CCardHeader>
+                      <CCardTitle>
+                        Activities
+                        {/* {actionState === 'user' || actionState === 'receipt'
+                          ? 'Activities'
+                          : 'Group Assigned'} */}
+                      </CCardTitle>
+                    </CCardHeader>
+                    <CCardBody>
+                      {actionState === 'user' && (
+                        <CButton
+                          onClick={() => {
+                            console.log(assignedUsers)
+                            if (Object.entries(assignedUsers).length !== servicesSelcted.length) {
+                              addToast(selectUserErrorToast)
+                              return
+                            }
+                            setVisible(true)
+                          }}
+                          color="info"
+                          size="lg"
+                        >
+                          Assign Users
+                        </CButton>
+                      )}
+                      {actionState !== 'user' && currentJob.order && currentJob.order.status && (
+                        <CButton
+                          onClick={() => {
+                            setIsSendingDraf(true)
+                          }}
+                          color="info"
+                          size="lg"
+                        >
+                          Send a Draft
+                        </CButton>
+                      )}
+                    </CCardBody>
+                  </CCard>
+                </CCallout>
+              </CCol>
+            </CRow>
+          </CContainer>
+        )}
+        {isLoading && <CSpinner size="large" />}
       </CCollapse>
       {isSendingDraft && (
         <div className="compose-mail">
